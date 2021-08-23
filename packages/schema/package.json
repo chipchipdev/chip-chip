@@ -19,7 +19,6 @@
     "cp-base": "rm -rf ./lib/* && cpx './src/base/*' ./lib/base"
   },
   "devDependencies": {
-    "cpx": "^1.5.0",
     "rxjs": "^7.3.0"
   },
   "gitHead": "3a147d02046110c55cc3fb7a76f6ae738de48fb8"

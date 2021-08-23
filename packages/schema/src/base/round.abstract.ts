@@ -1,3 +1,7 @@
-export default abstract class RoundAbstract {
+abstract class RoundAbstract {
 
 }
+
+export {
+  RoundAbstract,
+};

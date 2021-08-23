@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"@chip-chip/schema@^0.0.1-alpha.3":
-  version "0.0.1-alpha.3"
-  resolved "https://registry.yarnpkg.com/@chip-chip/schema/-/schema-0.0.1-alpha.3.tgz#4119df65d761cb1f002e139de90a782f8aa0d88e"
-  integrity sha512-/VaFKvUHdUFQHineUjm1NGCdsYLh1wUizs5pc5FNzm58vbIC2fOUGvUMR2cJwTAo3zZN1CcyvGPIPLDmzC6lyw==
-
 rxjs@^7.3.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.3.0.tgz#39fe4f3461dc1e50be1475b2b85a0a88c1e938c6"

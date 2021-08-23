@@ -1,3 +1,5 @@
-export default abstract class CroupierAbstract {
+abstract class CroupierAbstract {}
 
-}
+export {
+  CroupierAbstract,
+};

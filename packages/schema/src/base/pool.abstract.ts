@@ -1,3 +1,7 @@
-export default abstract class PoolAbstract {
+abstract class PoolAbstract {
 
 }
+
+export {
+  PoolAbstract,
+};

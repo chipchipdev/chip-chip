@@ -1,1 +1,5 @@
-export default abstract class MatchAbstract {}
+abstract class MatchAbstract {}
+
+export {
+  MatchAbstract,
+};
