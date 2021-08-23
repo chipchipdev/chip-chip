@@ -1,3 +1,1 @@
-export default abstract class MatchAbstract {
-
-}
+export default abstract class MatchAbstract {}
