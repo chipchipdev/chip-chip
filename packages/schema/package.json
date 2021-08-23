@@ -15,10 +15,11 @@
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "cp-base": "rm -rf ./lib/* && cp ./src/base ./lib/base",
+    "cp-base": "rm -rf ./lib/* && cp ./src/base/* ./lib/base",
     "prepublish": "npm run cp-base"
   },
   "devDependencies": {
     "rxjs": "^7.3.0"
-  }
+  },
+  "gitHead": "f2a432a1de4a81e1c6ae3d1351ca391af4a1e937"
 }
