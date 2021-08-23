@@ -1,6 +1,6 @@
 {
   "name": "@chip-chip/schema",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "> TODO: description",
   "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
   "homepage": "",
@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "cp-base":"rm -rf ./lib/* && cp ./src/base ./lib/base",
+    "cp-base": "rm -rf ./lib/* && cp ./src/base ./lib/base",
     "prepublish": "npm run cp-base"
   },
   "devDependencies": {
