@@ -14,10 +14,13 @@
     "lib"
   ],
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {
     "@chip-chip/schema": "^0.0.1-alpha.4",
     "rxjs": "^7.3.0"
+  },
+  "devDependencies": {
+    "casual": "^1.6.2"
   }
 }

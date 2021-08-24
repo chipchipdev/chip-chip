@@ -1,15 +1,22 @@
 import {
   PlayerAbstract,
   PlayerAction,
+  PlayerInitiator,
 } from '@chip-chip/schema';
 
 class Player extends PlayerAbstract<PlayerAction> {
+  constructor(private initiator: PlayerInitiator) { super(initiator); }
+
   getPlayer(): {
     id: string; name: string; chips: number;
-    joined: boolean; folded: boolean; allin: boolean; optioned: boolean;
-    action: PlayerAction
+    joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean;
+    action?: PlayerAction
   } {
-    throw new Error('Method not implemented.');
+    return {
+      id: this.id,
+      name: this.name,
+      chips: this.chips,
+    };
   }
 
   setChips(chips: number) {
