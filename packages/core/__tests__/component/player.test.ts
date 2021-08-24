@@ -1,6 +1,13 @@
 import * as casual from 'casual';
 import { Player } from '../../src/component/player';
 
+const setupFakePlayer = () => {
+  const fakeUuid = casual.uuid;
+  const fakeName = casual.name;
+  const fakeChips = 1000;
+  return new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
+};
+
 describe('Player Component', () => {
   it('should create the player instance successfully via id, name, initialize chips', () => {
     const fakeUuid = casual.uuid;
@@ -22,11 +29,8 @@ describe('Player Component', () => {
       and if someone subscribe the onChipsChange event,
       someone will receive the changes as well`,
     async () => {
-      const fakeUuid = casual.uuid;
-      const fakeName = casual.name;
-      const fakeChips = 1000;
+      const fakePlayer = setupFakePlayer();
       const fakeChipsChanged = 100;
-      const fakePlayer = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
 
       fakePlayer.onChipsChange.subscribe(({ chips, player }) => {
         expect(chips).toBe(fakeChipsChanged);
@@ -42,14 +46,11 @@ describe('Player Component', () => {
 
   it(
     `should set the joined state synchronously by setJoined func,
-      and if someone subscribe the onJoinedChange event,
+      and if someone subscribe the onJoinedStateChange event,
       someone will receive the changes as well`,
     async () => {
-      const fakeUuid = casual.uuid;
-      const fakeName = casual.name;
-      const fakeChips = 1000;
+      const fakePlayer = setupFakePlayer();
       const fakeJoinedState = false;
-      const fakePlayer = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
 
       fakePlayer.onJoinedStateChange.subscribe(({ joined, player }) => {
         expect(player.getPlayer().joined).toBe(fakeJoinedState);
@@ -60,6 +61,26 @@ describe('Player Component', () => {
       const { joined } = fakePlayer.getPlayer();
 
       expect(joined).toBe(fakeJoinedState);
+    },
+  );
+
+  it(
+    `should set the folded state synchronously by setFolded func,
+      and if someone subscribe the onFoldedStateChange event,
+      someone will receive the changes as well`,
+    async () => {
+      const fakePlayer = setupFakePlayer();
+      const fakeFoldedState = false;
+
+      fakePlayer.onFoldedStateChange.subscribe(({ folded, player }) => {
+        expect(player.getPlayer().folded).toBe(fakeFoldedState);
+        expect(folded).toBe(fakeFoldedState);
+      });
+
+      fakePlayer.setFolded(fakeFoldedState);
+      const { folded } = fakePlayer.getPlayer();
+
+      expect(folded).toBe(fakeFoldedState);
     },
   );
 });

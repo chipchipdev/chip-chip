@@ -109,19 +109,19 @@ abstract class PlayerAbstract<PlayerAction> {
    * @description the allin setter for player
    * @abstract
    */
-  abstract setAllin(folded: boolean);
+  abstract setAllin(allin: boolean);
 
   /**
    * @description the bet setter for player
    * @abstract
    */
-  abstract setBet(folded: boolean);
+  abstract setBet(bet: boolean);
 
   /**
    * @description the optioned setter for player
    * @abstract
    */
-  abstract setOptioned(folded: boolean);
+  abstract setOptioned(optioned: boolean);
 
   /**
    * @description the action setter for player

@@ -23,6 +23,7 @@ class Player
       name: this.name,
       chips: this.chips,
       joined: this.joined,
+      folded: this.folded,
     };
   }
 
@@ -43,18 +44,22 @@ class Player
   }
 
   setFolded(folded: boolean) {
+    this.folded = folded;
+    this.onFoldedStateChange.next({
+      folded,
+      player: this,
+    });
+  }
+
+  setAllin(allin: boolean) {
     throw new Error('Method not implemented.');
   }
 
-  setAllin(folded: boolean) {
+  setBet(bet: boolean) {
     throw new Error('Method not implemented.');
   }
 
-  setBet(folded: boolean) {
-    throw new Error('Method not implemented.');
-  }
-
-  setOptioned(folded: boolean) {
+  setOptioned(optioned: boolean) {
     throw new Error('Method not implemented.');
   }
 
