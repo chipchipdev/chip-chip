@@ -83,4 +83,73 @@ describe('Player Component', () => {
       expect(folded).toBe(fakeFoldedState);
     },
   );
+
+  it(
+    `should set the allin state synchronously by setAllin func,
+      and if someone subscribe the onAllinStateChange event,
+      someone will receive the changes as well`,
+    async () => {
+      const fakePlayer = setupFakePlayer();
+      const fakeAllinState = false;
+
+      fakePlayer.onAllinStateChange.subscribe(({ allin, player }) => {
+        expect(player.getPlayer().allin).toBe(fakeAllinState);
+        expect(allin).toBe(fakeAllinState);
+      });
+
+      fakePlayer.setAllin(fakeAllinState);
+      const { allin } = fakePlayer.getPlayer();
+
+      expect(allin).toBe(fakeAllinState);
+    },
+  );
+
+  it(
+    `should set the bet state synchronously by setBet func,
+      and if someone subscribe the onBetStateChange event,
+      someone will receive the changes as well`,
+    async () => {
+      const fakePlayer = setupFakePlayer();
+      const fakeBetState = false;
+
+      fakePlayer.onBetStateChange.subscribe(({ bet, player }) => {
+        expect(player.getPlayer().bet).toBe(fakeBetState);
+        expect(bet).toBe(fakeBetState);
+      });
+
+      fakePlayer.setBet(fakeBetState);
+      const { bet } = fakePlayer.getPlayer();
+
+      expect(bet).toBe(fakeBetState);
+    },
+  );
+
+  it(
+    `should set the optioned state synchronously by setOptioned func,
+      and if someone subscribe the onOptionedStateChange event,
+      someone will receive the changes as well`,
+    async () => {
+      const fakePlayer = setupFakePlayer();
+      const fakeOptionedState = false;
+
+      fakePlayer.onOptionedStateChange.subscribe(({ optioned, player }) => {
+        expect(player.getPlayer().optioned).toBe(fakeOptionedState);
+        expect(optioned).toBe(fakeOptionedState);
+      });
+
+      fakePlayer.setAllin(fakeOptionedState);
+      const { optioned } = fakePlayer.getPlayer();
+
+      expect(optioned).toBe(fakeOptionedState);
+    },
+  );
+
+  it(
+    `should set the player action synchronously by setAction func,
+      and if someone subscribe the onActionChange event,
+      someone will receive the changes as well`,
+    async () => {
+      // todo
+    },
+  );
 });

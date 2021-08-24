@@ -15,7 +15,7 @@ class Player
 
   getPlayer(): {
     id: string; name: string; chips: number;
-    joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean;
+    joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean; bet?: boolean;
     action?: PlayerAction
   } {
     return {
@@ -24,6 +24,8 @@ class Player
       chips: this.chips,
       joined: this.joined,
       folded: this.folded,
+      allin: this.allin,
+      bet: this.bet,
     };
   }
 
@@ -52,11 +54,19 @@ class Player
   }
 
   setAllin(allin: boolean) {
-    throw new Error('Method not implemented.');
+    this.allin = allin;
+    this.onAllinStateChange.next({
+      allin,
+      player: this,
+    });
   }
 
   setBet(bet: boolean) {
-    throw new Error('Method not implemented.');
+    this.bet = bet;
+    this.onBetStateChange.next({
+      bet,
+      player: this,
+    });
   }
 
   setOptioned(optioned: boolean) {

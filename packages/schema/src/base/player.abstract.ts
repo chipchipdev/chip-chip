@@ -83,7 +83,7 @@ abstract class PlayerAbstract<PlayerAction> {
    */
   abstract getPlayer(): {
     id: string, name: string, chips: number,
-    joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean;
+    joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean; bet?: boolean;
     action?: PlayerAction
   };
 
