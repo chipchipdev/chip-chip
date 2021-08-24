@@ -1,11 +1,13 @@
 import * as casual from 'casual';
 import { Player } from '../../src/component/player';
 
+type FakePlayerAction = {};
+
 const setupFakePlayer = () => {
   const fakeUuid = casual.uuid;
   const fakeName = casual.name;
   const fakeChips = 1000;
-  return new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
+  return new Player<FakePlayerAction>({ id: fakeUuid, name: fakeName, chips: fakeChips });
 };
 
 describe('Player Component', () => {
@@ -15,7 +17,7 @@ describe('Player Component', () => {
     const fakeChips = 1000;
     const player = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
 
-    expect.objectContaining<Player>(player);
+    expect.objectContaining<Player<FakePlayerAction>>(player);
 
     const currentPlayer = player.getPlayer();
 
