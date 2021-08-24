@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 type PlayerInitiator = {
   id: string
   name: string
@@ -120,7 +122,12 @@ abstract class PlayerAbstract<PlayerAction> {
   abstract setAction(action: PlayerAction);
 }
 
+interface PlayerInteractive<Player> {
+  onChipsChange: Observable<Player>;
+}
+
 export {
   PlayerAbstract,
   PlayerInitiator,
+  PlayerInteractive,
 };

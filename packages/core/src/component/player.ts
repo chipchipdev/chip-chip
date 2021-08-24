@@ -2,10 +2,16 @@ import {
   PlayerAbstract,
   PlayerAction,
   PlayerInitiator,
+  PlayerInteractive,
 } from '@chip-chip/schema';
+import { Subject } from 'rxjs';
 
-class Player extends PlayerAbstract<PlayerAction> {
-  constructor(private initiator: PlayerInitiator) { super(initiator); }
+class Player extends PlayerAbstract<PlayerAction> implements PlayerInteractive<Player> {
+  constructor(private initiator: PlayerInitiator) {
+    super(initiator);
+  }
+
+  onChipsChange = new Subject<Player>();
 
   getPlayer(): {
     id: string; name: string; chips: number;
@@ -20,7 +26,8 @@ class Player extends PlayerAbstract<PlayerAction> {
   }
 
   setChips(chips: number) {
-    throw new Error('Method not implemented.');
+    this.chips = chips;
+    this.onChipsChange.next(this);
   }
 
   setJoined(joined: boolean) {

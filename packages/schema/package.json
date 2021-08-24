@@ -18,14 +18,8 @@
     "prepublish": "npm run cp-base",
     "cp-base": "rm -rf ./lib/* && cpx './src/base/*' ./lib/base && cpx ./src/index.ts ./lib"
   },
-  "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "casual": "^1.6.2",
-    "rxjs": "^7.3.0",
-    "ts-jest": "^27.0.5"
-  },
   "gitHead": "3a147d02046110c55cc3fb7a76f6ae738de48fb8",
   "dependencies": {
-    "ts-jest": "^27.0.5"
+    "rxjs": "^7.3.0"
   }
 }
