@@ -1,6 +1,4 @@
 import * as casual from 'casual';
-
-import { firstValueFrom } from 'rxjs';
 import { Player } from '../../src/component/player';
 
 describe('Player Component', () => {
@@ -20,22 +18,48 @@ describe('Player Component', () => {
   });
 
   it(
-    'should set the chips by setChips func, '
-      + 'and if someone subscribe the onChipsChange event,'
-      + 'someone will receive the changes as well',
+    `should set the chips synchronously by setChips func,
+      and if someone subscribe the onChipsChange event,
+      someone will receive the changes as well`,
     async () => {
       const fakeUuid = casual.uuid;
       const fakeName = casual.name;
       const fakeChips = 1000;
       const fakeChipsChanged = 100;
-      const player = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
+      const fakePlayer = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
 
-      player.onChipsChange.subscribe((p) => {
-        const { chips } = p.getPlayer();
+      fakePlayer.onChipsChange.subscribe(({ chips, player }) => {
         expect(chips).toBe(fakeChipsChanged);
+        expect(player.getPlayer().chips).toBe(fakeChipsChanged);
       });
 
-      player.setChips(fakeChipsChanged);
+      fakePlayer.setChips(fakeChipsChanged);
+      const { chips } = fakePlayer.getPlayer();
+
+      expect(chips).toBe(fakeChipsChanged);
+    },
+  );
+
+  it(
+    `should set the joined state synchronously by setJoined func,
+      and if someone subscribe the onJoinedChange event,
+      someone will receive the changes as well`,
+    async () => {
+      const fakeUuid = casual.uuid;
+      const fakeName = casual.name;
+      const fakeChips = 1000;
+      const fakeJoinedState = false;
+      const fakePlayer = new Player({ id: fakeUuid, name: fakeName, chips: fakeChips });
+
+      fakePlayer.onJoinedStateChange.subscribe(({ joined, player }) => {
+        expect(player.getPlayer().joined).toBe(fakeJoinedState);
+        expect(joined).toBe(fakeJoinedState);
+      });
+
+      fakePlayer.setJoined(fakeJoinedState);
+      const { joined } = fakePlayer.getPlayer();
+
+      expect(joined).toBe(fakeJoinedState);
     },
   );
 });

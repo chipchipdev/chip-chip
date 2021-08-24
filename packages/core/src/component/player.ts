@@ -6,12 +6,12 @@ import {
 } from '@chip-chip/schema';
 import { Subject } from 'rxjs';
 
-class Player extends PlayerAbstract<PlayerAction> implements PlayerInteractive<Player> {
+class Player
+  extends PlayerAbstract<PlayerAction>
+  implements PlayerInteractive<Player, PlayerAction> {
   constructor(private initiator: PlayerInitiator) {
     super(initiator);
   }
-
-  onChipsChange = new Subject<Player>();
 
   getPlayer(): {
     id: string; name: string; chips: number;
@@ -22,16 +22,24 @@ class Player extends PlayerAbstract<PlayerAction> implements PlayerInteractive<P
       id: this.id,
       name: this.name,
       chips: this.chips,
+      joined: this.joined,
     };
   }
 
   setChips(chips: number) {
     this.chips = chips;
-    this.onChipsChange.next(this);
+    this.onChipsChange.next({
+      chips,
+      player: this,
+    });
   }
 
   setJoined(joined: boolean) {
-    throw new Error('Method not implemented.');
+    this.joined = joined;
+    this.onJoinedStateChange.next({
+      joined,
+      player: this,
+    });
   }
 
   setFolded(folded: boolean) {
@@ -53,6 +61,20 @@ class Player extends PlayerAbstract<PlayerAction> implements PlayerInteractive<P
   setAction(action: PlayerAction) {
     throw new Error('Method not implemented.');
   }
+
+  onJoinedStateChange = new Subject<{ joined: boolean, player: Player }>();
+
+  onFoldedStateChange = new Subject<{ folded: boolean, player: Player }>();
+
+  onAllinStateChange = new Subject<{ allin: boolean, player: Player }>();
+
+  onBetStateChange = new Subject<{ bet: boolean, player: Player }>();
+
+  onOptionedStateChange = new Subject<{ optioned: boolean, player: Player }>();
+
+  onActionChange = new Subject<{ action: PlayerAction, player: Player }>();
+
+  onChipsChange = new Subject<{ chips: number, player: Player }>();
 }
 
 export {
