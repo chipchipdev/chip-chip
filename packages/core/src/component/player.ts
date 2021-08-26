@@ -76,19 +76,42 @@ class Player<PlayerAction>
     throw new Error('Method not implemented.');
   }
 
-  onJoinedStateChange = new Subject<{ joined: boolean, player: Player<PlayerAction> }>();
+  onJoinedStateChange:Subject<{
+    joined: boolean,
+    player: Player<PlayerAction>
+  }>
+  = new Subject();
 
-  onFoldedStateChange = new Subject<{ folded: boolean, player: Player<PlayerAction> }>();
+  onFoldedStateChange:Subject<{
+    folded: boolean,
+    player: Player<PlayerAction>
+  }>
+  = new Subject();
 
-  onAllinStateChange = new Subject<{ allin: boolean, player: Player<PlayerAction> }>();
+  onAllinStateChange: Subject<{
+    allin: boolean,
+    player: Player<PlayerAction>
+  }> = new Subject();
 
-  onBetStateChange = new Subject<{ bet: boolean, player: Player<PlayerAction> }>();
+  onBetStateChange:Subject<{
+    bet: boolean,
+    player: Player<PlayerAction>
+  }> = new Subject();
 
-  onOptionedStateChange = new Subject<{ optioned: boolean, player: Player<PlayerAction> }>();
+  onOptionedStateChange:Subject<{
+    optioned: boolean,
+    player: Player<PlayerAction>
+  }> = new Subject();
 
-  onActionChange = new Subject<{ action: PlayerAction, player: Player<PlayerAction> }>();
+  onActionChange:Subject<{
+    action: PlayerAction,
+    player: Player<PlayerAction>
+  }> = new Subject();
 
-  onChipsChange = new Subject<{ chips: number, player: Player<PlayerAction> }>();
+  onChipsChange:Subject<{
+    chips: number,
+    player: Player<PlayerAction>
+  }> = new Subject();
 }
 
 export {

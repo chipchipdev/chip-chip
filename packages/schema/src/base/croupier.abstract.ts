@@ -65,7 +65,7 @@ abstract class CroupierAbstract<PlayerUnscheduled, Match> {
    * @description the players unscheduled array, need to be re-ordered
    * @protected
    */
-  protected players: (PlayerUnscheduled)[];
+  protected players: (PlayerUnscheduled)[] = [];
 
   /**
    * @description the match instance initialized during playing stage
@@ -78,7 +78,7 @@ abstract class CroupierAbstract<PlayerUnscheduled, Match> {
    * @abstract
    */
   abstract getCroupier(): {
-    id: string; owner: PlayerUnscheduled; stage: StaticRange;
+    id: string; owner: PlayerUnscheduled; stage: CroupierScheduledStage;
     players: PlayerUnscheduled[], match?: Match
   };
 
@@ -87,7 +87,7 @@ abstract class CroupierAbstract<PlayerUnscheduled, Match> {
    * @param player
    * @abstract
    */
-  abstract arrange(player: PlayerUnscheduled): boolean;
+  abstract arrange(player: PlayerUnscheduled);
 
   /**
    * @description re-order the player position
@@ -95,30 +95,30 @@ abstract class CroupierAbstract<PlayerUnscheduled, Match> {
    * @param index
    * @abstract
    */
-  abstract reorder(player: PlayerUnscheduled, index: number): PlayerUnscheduled[];
+  abstract reorder(player: PlayerUnscheduled, index: number);
 
   /**
    * @description start a new match
    * @abstract
    */
-  abstract start(): Match;
+  abstract start();
 
   /**
    * @description restart the match, which will create a new match basing on previous match's result
    * @abstract
    */
-  abstract restart(): Match;
+  abstract restart();
 
   /**
    * @description pause current match
    * @abstract
    */
-  abstract pause(): Match;
+  abstract pause();
 
   /**
    * @description end all the game
    */
-  abstract end(): Match;
+  abstract end();
 }
 
 /**

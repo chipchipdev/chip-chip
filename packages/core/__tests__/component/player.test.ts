@@ -11,7 +11,7 @@ const setupFakePlayer = () => {
 };
 
 describe('Player Component', () => {
-  it('should create the player instance successfully via id, name, initialize chips', () => {
+  it('should create the player instance successfully via id, name, initialize chips', (done) => {
     const fakeUuid = casual.uuid;
     const fakeName = casual.name;
     const fakeChips = 1000;
@@ -30,13 +30,14 @@ describe('Player Component', () => {
     `should set the chips synchronously by setChips func,
       and if someone subscribe the onChipsChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeChipsChanged = 100;
 
       fakePlayer.onChipsChange.subscribe(({ chips, player }) => {
         expect(chips).toBe(fakeChipsChanged);
         expect(player.getPlayer().chips).toBe(fakeChipsChanged);
+        done();
       });
 
       fakePlayer.setChips(fakeChipsChanged);
@@ -50,13 +51,14 @@ describe('Player Component', () => {
     `should set the joined state synchronously by setJoined func,
       and if someone subscribe the onJoinedStateChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeJoinedState = false;
 
       fakePlayer.onJoinedStateChange.subscribe(({ joined, player }) => {
         expect(player.getPlayer().joined).toBe(fakeJoinedState);
         expect(joined).toBe(fakeJoinedState);
+        done();
       });
 
       fakePlayer.setJoined(fakeJoinedState);
@@ -70,13 +72,14 @@ describe('Player Component', () => {
     `should set the folded state synchronously by setFolded func,
       and if someone subscribe the onFoldedStateChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeFoldedState = false;
 
       fakePlayer.onFoldedStateChange.subscribe(({ folded, player }) => {
         expect(player.getPlayer().folded).toBe(fakeFoldedState);
         expect(folded).toBe(fakeFoldedState);
+        done();
       });
 
       fakePlayer.setFolded(fakeFoldedState);
@@ -90,13 +93,14 @@ describe('Player Component', () => {
     `should set the allin state synchronously by setAllin func,
       and if someone subscribe the onAllinStateChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeAllinState = false;
 
       fakePlayer.onAllinStateChange.subscribe(({ allin, player }) => {
         expect(player.getPlayer().allin).toBe(fakeAllinState);
         expect(allin).toBe(fakeAllinState);
+        done();
       });
 
       fakePlayer.setAllin(fakeAllinState);
@@ -110,13 +114,14 @@ describe('Player Component', () => {
     `should set the bet state synchronously by setBet func,
       and if someone subscribe the onBetStateChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeBetState = false;
 
       fakePlayer.onBetStateChange.subscribe(({ bet, player }) => {
         expect(player.getPlayer().bet).toBe(fakeBetState);
         expect(bet).toBe(fakeBetState);
+        done();
       });
 
       fakePlayer.setBet(fakeBetState);
@@ -130,13 +135,14 @@ describe('Player Component', () => {
     `should set the optioned state synchronously by setOptioned func,
       and if someone subscribe the onOptionedStateChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       const fakePlayer = setupFakePlayer();
       const fakeOptionedState = false;
 
       fakePlayer.onOptionedStateChange.subscribe(({ optioned, player }) => {
         expect(player.getPlayer().optioned).toBe(fakeOptionedState);
         expect(optioned).toBe(fakeOptionedState);
+        done();
       });
 
       fakePlayer.setAllin(fakeOptionedState);
@@ -150,7 +156,7 @@ describe('Player Component', () => {
     `should set the player action synchronously by setAction func,
       and if someone subscribe the onActionChange event,
       someone will receive the changes as well`,
-    async () => {
+    (done) => {
       // todo
     },
   );
