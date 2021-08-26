@@ -1,9 +1,13 @@
 import { Observable } from 'rxjs';
 
+type Identifier = {
+  id: string;
+};
+
 /**
  * @description the initiator for create a croupier instance
  */
-type CroupierInitiator<PlayerUnscheduled> = {
+type CroupierInitiator<PlayerUnscheduled extends Identifier> = {
   id: string;
   player: PlayerUnscheduled
 };
@@ -34,7 +38,7 @@ enum CroupierScheduledStage {
  * @description the croupier abstract class that
  * @abstract
  */
-abstract class CroupierAbstract<PlayerUnscheduled, Match> {
+abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
   constructor(initiator: CroupierInitiator<PlayerUnscheduled>) {
     const { id, player } = initiator;
     this.id = id;

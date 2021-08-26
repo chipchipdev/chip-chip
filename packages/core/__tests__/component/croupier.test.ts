@@ -1,14 +1,14 @@
-import * as casual from 'casual';
+import casual from 'casual';
 import { CroupierScheduledStage } from '@chip-chip/schema';
 import { Croupier } from '../../src/component/croupier';
 
-type FakePlayerUnscheduled = {};
+type FakePlayerUnscheduled = { id: string };
 
 type FakeMatch = {};
 
 const setupFakeCroupier = () => {
   const fakeId = casual.uuid;
-  const fakePlayer = {} as FakePlayerUnscheduled;
+  const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
   return new Croupier<FakePlayerUnscheduled, FakeMatch>({
     id: fakeId,
     player: fakePlayer,
@@ -18,7 +18,7 @@ const setupFakeCroupier = () => {
 describe('Croupier Component', () => {
   it('should create a croupier instance via required id and player-unscheduled', () => {
     const fakeId = casual.uuid;
-    const fakePlayer = {} as FakePlayerUnscheduled;
+    const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
     const fakeCroupier = new Croupier<FakePlayerUnscheduled, FakeMatch>({
       id: fakeId,
       player: fakePlayer,
@@ -38,7 +38,7 @@ describe('Croupier Component', () => {
       someone will receive the changes as well`,
     (done) => {
       const fakeCroupier = setupFakeCroupier();
-      const fakePlayer = {} as FakePlayerUnscheduled;
+      const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
 
       fakeCroupier.onArrange.subscribe((({ player, croupier }) => {
         expect(player).toStrictEqual(fakePlayer);
@@ -53,4 +53,25 @@ describe('Croupier Component', () => {
       expect(currentPlayer).toBeDefined();
     },
   );
+
+  it(`should reorder the player with new order index
+      and if someone subscribe the onReorder event,
+      someone will receive the changes as well
+  `, () => {
+    const fakeCroupier = setupFakeCroupier();
+    const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
+    const fakeOrder = 0;
+
+    fakeCroupier.arrange(fakePlayer);
+
+    fakeCroupier.onReorder.subscribe(({ players, croupier }) => {
+      expect(players[fakeOrder]).toStrictEqual(fakePlayer);
+      expect(croupier).toStrictEqual(fakeCroupier);
+    });
+
+    fakeCroupier.reorder(fakePlayer, fakeOrder);
+
+    const { players } = fakeCroupier.getCroupier();
+    expect(players[fakeOrder]).toStrictEqual(fakePlayer);
+  });
 });

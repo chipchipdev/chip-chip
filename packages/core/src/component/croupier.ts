@@ -1,7 +1,7 @@
 import { CroupierAbstract, CroupierInteractive, CroupierScheduledStage } from '@chip-chip/schema';
 import { Observable, Subject } from 'rxjs';
 
-export class Croupier<PlayerUnscheduled, Match>
+export class Croupier<PlayerUnscheduled extends { id: string }, Match>
   extends CroupierAbstract<PlayerUnscheduled, Match>
   implements CroupierInteractive<Croupier<PlayerUnscheduled, Match>, PlayerUnscheduled, Match> {
   onArrange: Subject<{
@@ -61,7 +61,26 @@ export class Croupier<PlayerUnscheduled, Match>
   }
 
   reorder(player: PlayerUnscheduled, index: number) {
-    throw new Error('Method not implemented.');
+    if (!Reflect.has(player, 'id')) return;
+    if (!this.players[index]) return;
+
+    const reorderIndex = this.players.findIndex((p) => p.id === player.id);
+
+    if (!reorderIndex) return;
+
+    const reorderPlayers = this.players.splice(reorderIndex, 1);
+    const backPlayers = this.players.splice(index);
+
+    this.players = [
+      ...this.players,
+      ...reorderPlayers,
+      ...backPlayers,
+    ];
+
+    this.onReorder.next({
+      players: this.players,
+      croupier: this,
+    });
   }
 
   start() {
