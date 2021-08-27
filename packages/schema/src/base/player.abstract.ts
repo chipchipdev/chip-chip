@@ -9,6 +9,14 @@ type PlayerInitiator = {
   chips: number
 };
 
+enum PlayerActionEnum {
+  FOLD = 'FOLD',
+  CHECK = 'CHECK',
+  CALL = 'CALL',
+  BET = 'BET',
+  RAISE = 'RAISE',
+}
+
 /**
  * @description the abstract class for player instance, do some initialize chores in constructor
  * and also define some abstract methods that need to be implement
@@ -175,4 +183,5 @@ export {
   PlayerAbstract,
   PlayerInitiator,
   PlayerInteractive,
+  PlayerActionEnum,
 };

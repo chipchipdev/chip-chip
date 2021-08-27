@@ -1,12 +1,38 @@
 import { Observable } from 'rxjs';
 import { MatchSharedBase, MatchSharedInitiator } from './match.abstract';
 
+/**
+ * @description round initiator inherit from the match shared initiator
+ */
 type RoundInitiator<Pool, Hand, Round, Player, PlayerAction> =
     MatchSharedInitiator<Pool, Hand, Round, Player, PlayerAction>;
 
-abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction>
+/**
+ * @description the enum that maintains all round states
+ */
+enum RoundStateEnum {
+  PRE_FLOP,
+  FLOP,
+  TURN,
+  RIVER,
+}
+
+/**
+ * @description the abstract class for round instance, do some initialize chores in constructor
+ * and also define some abstract methods that need to be implement
+ * @abstract
+ */
+abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
-  playing: Observable<boolean>;
+  /**
+   * @description the hand status observable, will be updated after a round is ended
+   */
+  status: Observable<HandStatus>;
+
+  /**
+   * @description a store that maintains all the actions from each player during current round
+   */
+  actionMap:{ [id: string]: PlayerAction };
 
   /**
    * @description play a new round
@@ -63,4 +89,5 @@ export {
   RoundAbstract,
   RoundInitiator,
   RoundInteractive,
+  RoundStateEnum,
 };

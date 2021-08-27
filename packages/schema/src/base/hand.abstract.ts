@@ -2,11 +2,25 @@ import { Observable } from 'rxjs';
 
 import { MatchSharedBase, MatchSharedInitiator } from './match.abstract';
 
+/**
+ * @description hand initiator inherit from the match shared initiator
+ */
 type HandInitiator<Pool, Hand, Round, Player, PlayerAction> =
     MatchSharedInitiator<Pool, Hand, Round, Player, PlayerAction>;
 
+/**
+ * @description the hand status that if the game has been finished after each round
+ */
+type HandStatus<Player> = {
+  completed: boolean;
+  winners: Player;
+};
+
 abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
+  /**
+   * @description the state that whether current hand is playing
+   */
   playing: Observable<boolean>;
 
   /**
@@ -48,4 +62,5 @@ export {
   HandInitiator,
   HandAbstract,
   HandInteractive,
+  HandStatus,
 };
