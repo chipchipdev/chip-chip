@@ -12,10 +12,6 @@ class Player<PlayerAction>
     super(initiator);
   }
 
-  unsubscribe(): void {
-    throw new Error('Method not implemented.');
-  }
-
   getPlayer(): {
     id: string; name: string; chips: number;
     joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean; bet?: boolean;
@@ -81,6 +77,10 @@ class Player<PlayerAction>
   }
 
   disposableBag: Subscription[] = [];
+
+  unsubscribe(): void {
+    throw new Error('Method not implemented.');
+  }
 
   onChipsChangeObservable: Subject<{ chips: number; player: Player<PlayerAction>; }>
   = new Subject();

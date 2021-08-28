@@ -194,26 +194,50 @@ interface PlayerInteractive<Player, PlayerAction> {
   onChipsChange: (subscription: ({ chips, player }:{ chips: number, player: Player }) => void)
   => Observable<{ chips: number, player: Player }>;
 
+  /**
+   * @description add subscriptions for onJoinedStateChangeObservable
+   * @param subscription
+   */
   onJoinedStateChange: (subscription: ({ joined, player }:
   { joined: boolean, player: Player }) => void)
   => Observable<{ joined: boolean, player: Player }>;
 
+  /**
+   * @description add subscriptions for onFoldedStateChangeObservable
+   * @param subscription
+   */
   onFoldedStateChange: (subscription: ({ folded, player }:
   { folded: boolean, player: Player }) => void)
   => Observable<{ folded: boolean, player: Player }>;
 
+  /**
+   * @description add subscriptions for onAllinStateChangeObservable
+   * @param subscription
+   */
   onAllinStateChange: (subscription: ({ allin, player }:
   { allin: boolean, player: Player }) => void)
   => Observable<{ allin: boolean, player: Player }>;
 
+  /**
+   * @description add subscriptions for onBetStateChangeObservable
+   * @param subscription
+   */
   onBetStateChange: (subscription: ({ bet, player }:
   { bet: boolean, player: Player }) => void)
   => Observable<{ bet: boolean, player: Player }>;
 
+  /**
+   * @description add subscriptions for onOptionedStateChangeObservable
+   * @param subscription
+   */
   onOptionedStateChange: (subscription: ({ optioned, player }:
   { optioned: boolean, player: Player }) => void)
   => Observable<{ optioned: boolean, player: Player }>;
 
+  /**
+   * @description add subscriptions for onActionChangeObservable
+   * @param subscription
+   */
   onActionChange: (subscription: ({ action, player }:
   { action: PlayerAction, player: Player }) => void)
   =>Observable<{ action: PlayerAction, player: Player }>;

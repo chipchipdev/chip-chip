@@ -45,17 +45,41 @@ interface HandInteractive<Hand, Round> {
    * @description when some other subscribe this property,
    * it will receive the match instance after it started
    */
-  onStart: Observable<{ hand: Hand }>
+  onStartObservable: Observable<{ hand: Hand }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match instance after it ended
    */
-  onEnd: Observable<{ hand: Hand }>
+  onEndObservable: Observable<{ hand: Hand }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match instance after a new round is starting
    */
-  onPlay: Observable<{ hand: Hand, round: Round }>
+  onPlayObservable: Observable<{ hand: Hand, round: Round }>
+
+  /**
+   * @description add subscriptions for onStartObservable
+   * @param subscription
+   */
+  onStart:(subscription: ({ hand }:
+  { hand: Hand }) => void)
+  => Observable<{ hand: Hand }>
+
+  /**
+   * @description add subscriptions for onEndObservable
+   * @param subscription
+   */
+  onEnd:(subscription: ({ hand }:
+  { hand: Hand }) => void)
+  => Observable<{ hand: Hand }>
+
+  /**
+   * @description add subscriptions for onPlayObservable
+   * @param subscription
+   */
+  onPlay:(subscription: ({ hand, round }:
+  { hand: Hand, round: Round }) => void)
+  => Observable<{ hand: Hand, round: Round }>
 }
 
 export {

@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 type Identifier = {
   id: string;
@@ -130,35 +130,92 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
  */
 interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
   /**
+   * @description disposable bag
+   */
+  disposableBag: Subscription[];
+  /**
+   * @description clear the disposable bag
+   */
+  unsubscribe(): void
+
+  /**
    * @description when some other subscribe this property,
    * it will receive the new unscheduled player state after be arranged
    */
-  onArrange: Observable<{ player: PlayerUnscheduled, croupier: Croupier }>
+  onArrangeObservable: Observable<{ player: PlayerUnscheduled, croupier: Croupier }>
   /**
    * @description when some other subscribe this property,
    * it will receive the unscheduled player list with new order after re-ordered
    */
-  onReorder: Observable<{ players: PlayerUnscheduled[], croupier: Croupier }>
+  onReorderObservable: Observable<{ players: PlayerUnscheduled[], croupier: Croupier }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match object after match started
    */
-  onStart: Observable<{ match: Match, croupier: Croupier }>
+  onStartObservable: Observable<{ match: Match, croupier: Croupier }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match object after match restarted
    */
-  onRestart: Observable<{ match: Match, croupier: Croupier }>
+  onRestartObservable: Observable<{ match: Match, croupier: Croupier }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match object after match paused
    */
-  onPause: Observable<{ match: Match, croupier: Croupier }>
+  onPauseObservable: Observable<{ match: Match, croupier: Croupier }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match object after match ended
    */
-  onEnd: Observable<{ match: Match, croupier: Croupier }>
+  onEndObservable: Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onArrangeObservable
+   * @param subscription
+   */
+  onArrange:(subscription: ({ player, croupier }:
+  { player: PlayerUnscheduled, croupier: Croupier }) => void)
+  => Observable<{ player: PlayerUnscheduled, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onReorderObservable
+   * @param subscription
+   */
+  onReorder:(subscription: ({ players, croupier }:
+  { players: PlayerUnscheduled[], croupier: Croupier }) => void)
+  => Observable<{ players: PlayerUnscheduled[], croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onStartObservable
+   * @param subscription
+   */
+  onStart:(subscription: ({ match, croupier }:
+  { match: Match, croupier: Croupier }) => void)
+  => Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onRestartObservable
+   * @param subscription
+   */
+  onRestart: (subscription: ({ match, croupier }:
+  { match: Match, croupier: Croupier }) => void)
+  => Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onPauseObservable
+   * @param subscription
+   */
+  onPause: (subscription: ({ match, croupier }:
+  { match: Match, croupier: Croupier }) => void)
+  => Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onEndObservable
+   * @param subscription
+   */
+  onEnd:(subscription: ({ match, croupier }:
+  { match: Match, croupier: Croupier }) => void)
+  =>Observable<{ match: Match, croupier: Croupier }>
 }
 
 export {

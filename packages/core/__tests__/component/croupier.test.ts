@@ -40,7 +40,7 @@ describe('Croupier Component', () => {
       const fakeCroupier = setupFakeCroupier();
       const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
 
-      fakeCroupier.onArrange.subscribe((({ player, croupier }) => {
+      fakeCroupier.onArrange((({ player, croupier }) => {
         expect(player).toStrictEqual(fakePlayer);
         expect(croupier).toStrictEqual(fakeCroupier);
         done();
@@ -64,7 +64,7 @@ describe('Croupier Component', () => {
 
     fakeCroupier.arrange(fakePlayer);
 
-    fakeCroupier.onReorder.subscribe(({ players, croupier }) => {
+    fakeCroupier.onReorder(({ players, croupier }) => {
       expect(players[fakeOrder]).toStrictEqual(fakePlayer);
       expect(croupier).toStrictEqual(fakeCroupier);
     });

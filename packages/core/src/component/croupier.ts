@@ -1,45 +1,9 @@
 import { CroupierAbstract, CroupierInteractive, CroupierScheduledStage } from '@chip-chip/schema';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 export class Croupier<PlayerUnscheduled extends { id: string }, Match>
   extends CroupierAbstract<PlayerUnscheduled, Match>
   implements CroupierInteractive<Croupier<PlayerUnscheduled, Match>, PlayerUnscheduled, Match> {
-  onArrange: Subject<{
-    player: PlayerUnscheduled;
-    croupier: Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
-  onReorder: Subject<{
-    players: PlayerUnscheduled[];
-    croupier: Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
-  onStart: Subject<{
-    match: Match;
-    croupier: Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
-  onRestart: Subject<{
-    match: Match;
-    croupier: Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
-  onPause: Subject<{
-    match: Match; croupier:
-    Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
-  onEnd: Observable<{
-    match: Match;
-    croupier: Croupier<PlayerUnscheduled, Match>;
-  }>
-  = new Subject();
-
   getCroupier(): {
     id: string; owner: PlayerUnscheduled; stage: CroupierScheduledStage;
     players: PlayerUnscheduled[]; match?: Match;
@@ -54,7 +18,7 @@ export class Croupier<PlayerUnscheduled extends { id: string }, Match>
 
   arrange(player: PlayerUnscheduled) {
     this.players.push(player);
-    this.onArrange.next({
+    this.onArrangeObservable.next({
       player,
       croupier: this,
     });
@@ -77,7 +41,7 @@ export class Croupier<PlayerUnscheduled extends { id: string }, Match>
       ...backPlayers,
     ];
 
-    this.onReorder.next({
+    this.onReorderObservable.next({
       players: this.players,
       croupier: this,
     });
@@ -98,4 +62,88 @@ export class Croupier<PlayerUnscheduled extends { id: string }, Match>
   end() {
     throw new Error('Method not implemented.');
   }
+
+  disposableBag: Subscription[] = [];
+
+  unsubscribe(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  onArrangeObservable:
+  Subject<{ player: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onReorderObservable:
+  Subject<{ players: PlayerUnscheduled[]; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onStartObservable:
+  Subject<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onRestartObservable:
+  Subject<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onPauseObservable:
+  Subject<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onEndObservable:
+  Subject<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }>
+  = new Subject();
+
+  onArrange: (subscription: ({ player, croupier }:
+  { player: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ player: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onArrangeObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onArrangeObservable;
+  };
+
+  onReorder: (subscription: ({ players, croupier }:
+  { players: PlayerUnscheduled[]; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ players: PlayerUnscheduled[]; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onReorderObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onReorderObservable;
+  };
+
+  onStart: (subscription: ({ match, croupier }:
+  { match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onStartObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onStartObservable;
+  };
+
+  onRestart: (subscription: ({ match, croupier }:
+  { match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onRestartObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onRestartObservable;
+  };
+
+  onPause: (subscription: ({ match, croupier }:
+  { match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onPauseObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onPauseObservable;
+  };
+
+  onEnd: (subscription: ({ match, croupier }:
+  { match: Match; croupier: Croupier<PlayerUnscheduled, Match>; }) => void)
+  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled, Match> }>
+  = (subscription) => {
+    const disposable = this.onEndObservable.subscribe(subscription);
+    this.disposableBag.push(disposable);
+    return this.onEndObservable;
+  };
 }

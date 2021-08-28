@@ -66,23 +66,56 @@ interface RoundInteractive<Round, Player> {
    * @description when some other subscribe this property,
    * it will receive the match instance after it started
    */
-  onStart: Observable<{ round: Round }>
+  onStartObservable: Observable<{ round: Round }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match instance after it ended
    */
-  onEnd: Observable<{ round: Round }>
+  onEndObservable: Observable<{ round: Round }>
   /**
    * @description when round instance has started to monitor some player's action
    * it will receive current player and current round
    */
-  onMonitor: Observable<{ player: Player, round: Round }>
+  onMonitorObservable: Observable<{ player: Player, round: Round }>
   /**
    * @description when round instance are dealing with some player's action
    * (which means the action is legally)
    * it will receive current player and current round
    */
-  onDeal: Observable<{ player: Player, round: Round }>
+  onDealObservable: Observable<{ player: Player, round: Round }>
+
+  /**
+   * @description add subscriptions for onStartObservable
+   * @param subscription
+   */
+  onStart:(subscription: ({ round }:
+  { round: Round }) => void)
+  => Observable<{ round: Round }>
+
+  /**
+   * @description add subscriptions for onEndObservable
+   * @param subscription
+   */
+  onEnd:(subscription: ({ round }:
+  { round: Round }) => void)
+  => Observable<{ round: Round }>
+
+  /**
+   * @description add subscriptions for onMonitorObservable
+   * @param subscription
+   */
+  onMonitor:(subscription: ({ player, round }:
+  { player: Player, round: Round }) => void)
+  => Observable<{ player: Player, round: Round }>
+
+  /**
+   * @description add subscriptions for onDealObservable
+   * @param subscription
+   */
+  onDeal:(subscription: ({ player, round }:
+  { player: Player, round: Round }) => void)
+  => Observable<{ player: Player, round: Round }>
+
 }
 
 export {

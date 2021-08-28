@@ -161,22 +161,51 @@ interface MatchInteractive<Match, Hand> {
      * @description when some other subscribe this property,
      * it will receive the match instance after it started
      */
-  onStart: Observable<{ match: Match }>;
+  onStartObservable: Observable<{ match: Match }>;
   /**
      * @description when some other subscribe this property,
      * it will receive the match instance after it paused
      */
-  onPause: Observable<{ match: Match }>;
+  onPauseObservable: Observable<{ match: Match }>;
   /**
      * @description when some other subscribe this property,
-     * it will receive the match instance after it finished
+     * it will receive the match instance after it ended
      */
-  onFinish: Observable<{ match: Match }>;
+  onEndObservable: Observable<{ match: Match }>;
   /**
      * @description when some other subscribe this property,
      * it will receive the match instance and hand instance when each hand start
      */
-  onPlay: Observable<{ match: Match, hand: Hand }>
+  onPlayObservable: Observable<{ match: Match, hand: Hand }>
+
+  /**
+   * @description add subscriptions for onStartObservable
+   * @param subscription
+   */
+  onStart:(subscription: ({ match }:
+  { match: Match }) => void)
+  => Observable<{ match: Match }>
+  /**
+   * @description add subscriptions for onPauseObservable
+   * @param subscription
+   */
+  onPause:(subscription: ({ match }:
+  { match: Match }) => void)
+  => Observable<{ match: Match }>
+  /**
+   * @description add subscriptions for onEndObservable
+   * @param subscription
+   */
+  onEnd:(subscription: ({ match }:
+  { match: Match }) => void)
+  => Observable<{ match: Match }>
+  /**
+   * @description add subscriptions for onPlayObservable
+   * @param subscription
+   */
+  onPlay:(subscription: ({ match, hand }:
+  { match: Match, hand: Hand }) => void)
+  => Observable<{ match: Match, hand: Hand }>
 }
 
 export {
