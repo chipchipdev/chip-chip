@@ -1,11 +1,13 @@
 import { HandAbstract, HandInteractive } from '@chip-chip/schema';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { Player } from './player';
+import { Pool } from './pool';
+import { Round } from './round';
 
-export class Hand<Pool, Round, PlayerAction>
-  extends HandAbstract<Pool, Hand<Pool, Round, PlayerAction>,
-  Round, Player<PlayerAction>, PlayerAction>
-  implements HandInteractive<Hand<Pool, Round, PlayerAction>, Round> {
+export class Hand<PlayerAction>
+  extends HandAbstract<Pool, Hand<PlayerAction>,
+  Round<PlayerAction>, Player<PlayerAction>, PlayerAction>
+  implements HandInteractive<Hand<PlayerAction>, Round<PlayerAction>> {
   constructor(initiator) {
     super(initiator);
     this.players.forEach((player) => {
@@ -42,27 +44,27 @@ export class Hand<Pool, Round, PlayerAction>
     throw new Error('Method not implemented.');
   }
 
-  onStartObservable: Subject<{ hand: Hand<Pool, Round, PlayerAction> }>;
+  onStartObservable: Subject<{ hand: Hand<PlayerAction> }>;
 
-  onEndObservable: Subject<{ hand: Hand<Pool, Round, PlayerAction> }>;
+  onEndObservable: Subject<{ hand: Hand<PlayerAction> }>;
 
-  onPlayObservable: Subject<{ hand: Hand<Pool, Round, PlayerAction>; round: Round }>;
+  onPlayObservable: Subject<{ hand: Hand<PlayerAction>; round: Round<PlayerAction> }>;
 
   onEnd(subscription: ({ hand }:
-  { hand: Hand<Pool, Round, PlayerAction> }) => void):
-    Observable<{ hand: Hand<Pool, Round, PlayerAction> }> {
+  { hand: Hand<PlayerAction> }) => void):
+    Observable<{ hand: Hand<PlayerAction> }> {
     return undefined;
   }
 
   onPlay(subscription: ({ hand, round }:
-  { hand: Hand<Pool, Round, PlayerAction>; round: Round }) => void):
-    Observable<{ hand: Hand<Pool, Round, PlayerAction>; round: Round }> {
+  { hand: Hand<PlayerAction>; round: Round }) => void):
+    Observable<{ hand: Hand<PlayerAction>; round: Round }> {
     return undefined;
   }
 
   onStart(subscription: ({ hand }:
-  { hand: Hand<Pool, Round, PlayerAction> }) => void):
-    Observable<{ hand: Hand<Pool, Round, PlayerAction> }> {
+  { hand: Hand<PlayerAction> }) => void):
+    Observable<{ hand: Hand<PlayerAction> }> {
     return undefined;
   }
 }
