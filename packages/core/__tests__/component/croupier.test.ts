@@ -32,27 +32,24 @@ describe('Croupier Component', () => {
     expect(currentCroupier.stage).toBe(CroupierScheduledStage.PREPARING);
   });
 
-  it(
-    `should set the new player in players list synchronously by arrange func,
+  it(`should set the new player in players list synchronously by arrange func,
       and if someone subscribe the onArrange event,
-      someone will receive the changes as well`,
-    (done) => {
-      const fakeCroupier = setupFakeCroupier();
-      const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
+      someone will receive the changes as well`, (done) => {
+    const fakeCroupier = setupFakeCroupier();
+    const fakePlayer = { id: casual.uuid } as FakePlayerUnscheduled;
 
-      fakeCroupier.onArrange((({ player, croupier }) => {
-        expect(player).toStrictEqual(fakePlayer);
-        expect(croupier).toStrictEqual(fakeCroupier);
-        done();
-      }));
+    fakeCroupier.onArrange(({ player, croupier }) => {
+      expect(player).toStrictEqual(fakePlayer);
+      expect(croupier).toStrictEqual(fakeCroupier);
+      done();
+    });
 
-      fakeCroupier.arrange(fakePlayer);
+    fakeCroupier.arrange(fakePlayer);
 
-      const { players } = fakeCroupier.getCroupier();
-      const currentPlayer = players.find((p) => p === fakePlayer);
-      expect(currentPlayer).toBeDefined();
-    },
-  );
+    const { players } = fakeCroupier.getCroupier();
+    const currentPlayer = players.find((p) => p === fakePlayer);
+    expect(currentPlayer).toBeDefined();
+  });
 
   it(`should reorder the player with new order index
       and if someone subscribe the onReorder event,
