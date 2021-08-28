@@ -11,7 +11,7 @@ const setupFakePlayer = () => {
 };
 
 describe('Player Component', () => {
-  it('should create the player instance successfully via id, name, initialize chips', (done) => {
+  it('should create the player instance successfully via id, name, initialize chips', () => {
     const fakeUuid = casual.uuid;
     const fakeName = casual.name;
     const fakeChips = 1000;
@@ -34,7 +34,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeChipsChanged = 100;
 
-      fakePlayer.onChipsChange.subscribe(({ chips, player }) => {
+      fakePlayer.onChipsChange(({ chips, player }) => {
         expect(chips).toBe(fakeChipsChanged);
         expect(player.getPlayer().chips).toBe(fakeChipsChanged);
         done();
@@ -55,7 +55,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeJoinedState = false;
 
-      fakePlayer.onJoinedStateChange.subscribe(({ joined, player }) => {
+      fakePlayer.onJoinedStateChange(({ joined, player }) => {
         expect(player.getPlayer().joined).toBe(fakeJoinedState);
         expect(joined).toBe(fakeJoinedState);
         done();
@@ -76,7 +76,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeFoldedState = false;
 
-      fakePlayer.onFoldedStateChange.subscribe(({ folded, player }) => {
+      fakePlayer.onFoldedStateChange(({ folded, player }) => {
         expect(player.getPlayer().folded).toBe(fakeFoldedState);
         expect(folded).toBe(fakeFoldedState);
         done();
@@ -97,7 +97,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeAllinState = false;
 
-      fakePlayer.onAllinStateChange.subscribe(({ allin, player }) => {
+      fakePlayer.onAllinStateChange(({ allin, player }) => {
         expect(player.getPlayer().allin).toBe(fakeAllinState);
         expect(allin).toBe(fakeAllinState);
         done();
@@ -118,7 +118,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeBetState = false;
 
-      fakePlayer.onBetStateChange.subscribe(({ bet, player }) => {
+      fakePlayer.onBetStateChange(({ bet, player }) => {
         expect(player.getPlayer().bet).toBe(fakeBetState);
         expect(bet).toBe(fakeBetState);
         done();
@@ -139,7 +139,7 @@ describe('Player Component', () => {
       const fakePlayer = setupFakePlayer();
       const fakeOptionedState = false;
 
-      fakePlayer.onOptionedStateChange.subscribe(({ optioned, player }) => {
+      fakePlayer.onOptionedStateChange(({ optioned, player }) => {
         expect(player.getPlayer().optioned).toBe(fakeOptionedState);
         expect(optioned).toBe(fakeOptionedState);
         done();

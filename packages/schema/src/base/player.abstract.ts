@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 /**
  * @description the minimum version initiator for player's constructor
@@ -143,40 +143,80 @@ abstract class PlayerAbstract<PlayerAction> {
  */
 interface PlayerInteractive<Player, PlayerAction> {
   /**
+   * @description disposable bag
+   */
+  disposableBag: Subscription[];
+  /**
+   * @description clear the disposable bag
+   */
+  unsubscribe(): void
+
+  /**
    * @description when some other subscribe this property,
    * it will receive the new player state after chips changes
    */
-  onChipsChange: Observable<{ chips: number, player: Player }>;
+  onChipsChangeObservable: Observable<{ chips: number, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after joined state changes
    */
-  onJoinedStateChange: Observable<{ joined: boolean, player: Player }>;
+  onJoinedStateChangeObservable: Observable<{ joined: boolean, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after folded state changes
    */
-  onFoldedStateChange: Observable<{ folded: boolean, player: Player }>;
+  onFoldedStateChangeObservable: Observable<{ folded: boolean, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after allin state changes
    */
-  onAllinStateChange: Observable<{ allin: boolean, player: Player }>;
+  onAllinStateChangeObservable: Observable<{ allin: boolean, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after bet state changes
    */
-  onBetStateChange: Observable<{ bet: boolean, player: Player }>;
+  onBetStateChangeObservable: Observable<{ bet: boolean, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after optioned state changes
    */
-  onOptionedStateChange: Observable<{ optioned: boolean, player: Player }>;
+  onOptionedStateChangeObservable: Observable<{ optioned: boolean, player: Player }>;
   /**
    * @description when some other subscribe this property,
    * it will receive the new player state after action changes
    */
-  onActionChange: Observable<{ action: PlayerAction, player: Player }>;
+  onActionChangeObservable: Observable<{ action: PlayerAction, player: Player }>;
+
+  /**
+   * @description add subscriptions for onChipsChangeObservable
+   * @param subscription
+   */
+  onChipsChange: (subscription: ({ chips, player }:{ chips: number, player: Player }) => void)
+  => Observable<{ chips: number, player: Player }>;
+
+  onJoinedStateChange: (subscription: ({ joined, player }:
+  { joined: boolean, player: Player }) => void)
+  => Observable<{ joined: boolean, player: Player }>;
+
+  onFoldedStateChange: (subscription: ({ folded, player }:
+  { folded: boolean, player: Player }) => void)
+  => Observable<{ folded: boolean, player: Player }>;
+
+  onAllinStateChange: (subscription: ({ allin, player }:
+  { allin: boolean, player: Player }) => void)
+  => Observable<{ allin: boolean, player: Player }>;
+
+  onBetStateChange: (subscription: ({ bet, player }:
+  { bet: boolean, player: Player }) => void)
+  => Observable<{ bet: boolean, player: Player }>;
+
+  onOptionedStateChange: (subscription: ({ optioned, player }:
+  { optioned: boolean, player: Player }) => void)
+  => Observable<{ optioned: boolean, player: Player }>;
+
+  onActionChange: (subscription: ({ action, player }:
+  { action: PlayerAction, player: Player }) => void)
+  =>Observable<{ action: PlayerAction, player: Player }>;
 }
 
 export {
