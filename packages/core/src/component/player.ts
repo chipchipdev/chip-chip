@@ -76,7 +76,9 @@ class Player<PlayerAction>
     throw new Error('Method not implemented.');
   }
 
-  disposableBag: Subscription[] = [];
+  disposableBag: Subscription = new Subscription();
+
+  interactiveCollector: { [key: string]: any; }[];
 
   unsubscribe(): void {
     throw new Error('Method not implemented.');
@@ -108,7 +110,7 @@ class Player<PlayerAction>
   => Observable<{ chips: number; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onChipsChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onChipsChangeObservable;
   };
 
@@ -117,7 +119,7 @@ class Player<PlayerAction>
   => Observable<{ joined: boolean; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onJoinedStateChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onJoinedStateChangeObservable;
   };
 
@@ -126,7 +128,7 @@ class Player<PlayerAction>
   => Observable<{ folded: boolean; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onFoldedStateChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onFoldedStateChangeObservable;
   };
 
@@ -135,7 +137,7 @@ class Player<PlayerAction>
   => Observable<{ allin: boolean; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onAllinStateChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onAllinStateChangeObservable;
   };
 
@@ -144,7 +146,7 @@ class Player<PlayerAction>
   => Observable<{ bet: boolean; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onBetStateChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onBetStateChangeObservable;
   };
 
@@ -153,7 +155,7 @@ class Player<PlayerAction>
   => Observable<{ optioned: boolean; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onOptionedStateChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onOptionedStateChangeObservable;
   };
 
@@ -162,7 +164,7 @@ class Player<PlayerAction>
   => Observable<{ action: PlayerAction; player: Player<PlayerAction>; }>
   = (subscription) => {
     const disposable = this.onActionChangeObservable.subscribe(subscription);
-    this.disposableBag.push(disposable);
+    this.disposableBag.add(disposable);
     return this.onActionChangeObservable;
   };
 }

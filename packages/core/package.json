@@ -18,9 +18,12 @@
   },
   "dependencies": {
     "@chip-chip/schema": "^0.0.1-alpha.4",
-    "rxjs": "^7.3.0"
+    "lodash": "^4.17.21",
+    "rxjs": "^7.3.0",
+    "ts-transformer-keys": "^0.4.3"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.172",
     "casual": "^1.6.2"
   }
 }

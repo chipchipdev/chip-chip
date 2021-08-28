@@ -17,10 +17,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "ts-jest": "^27.0.5"
+    "lodash": "^4.17.21",
+    "ts-jest": "^27.0.5",
+    "ts-transformer-keys": "^0.4.3"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
+    "@types/lodash": "^4.14.172",
     "casual": "^1.6.2",
     "ts-jest": "^27.0.5"
   }

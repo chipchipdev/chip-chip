@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 /**
  * @description the maximum version initiator for match's constructor
@@ -7,45 +7,51 @@ import { Observable } from 'rxjs';
 type MatchSharedInitiator<Pool, Hand, Round, Player, PlayerAction > = {
 
   /**
-     * @description match channel, for receiving player's action
-     * @protected
-     */
+   * @description match channel, for receiving player's action
+   * @protected
+   */
   channel: Observable<PlayerAction>;
 
   /**
-     * @description the chips for each player
-     * @protected
-     */
+   * @description the chips for each player
+   * @protected
+   */
   chips: number;
 
   /**
-     * @description current hand instance
-     * @protected
-     */
+   * @description current hand instance
+   * @protected
+   */
   hand?: Hand;
 
   /**
-     * @description the pool that calculate the chips after each hand and each round
-     * @protected
-     */
+   * @description the pool that calculate the chips after each hand and each round
+   * @protected
+   */
   pool?: Pool;
 
   /**
-     * @description players in match
-     * @protected
-     */
+   * @description the dealer button position for each hand
+   * @protected
+   */
+  position?: number;
+
+  /**
+   * @description players in match
+   * @protected
+   */
   players: Player[];
 
   /**
-     * @description current round instance
-     * @protected
-     */
+   * @description current round instance
+   * @protected
+   */
   round?: Round;
 
   /**
-     * @description the small blind wager
-     * @protected
-     */
+   * @description the small blind wager
+   * @protected
+   */
   wager: number;
 };
 
@@ -61,8 +67,13 @@ class MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
       pool,
       players,
       round,
+      position,
       wager,
     } = initiator;
+    if (!players) throw new Error('players required');
+    if (!channel) throw new Error('channel required');
+    if (!wager) throw new Error('wager required');
+    if (!chips) throw new Error('chips required');
     this.players = players;
     this.channel = channel;
     this.wager = wager;
@@ -70,55 +81,56 @@ class MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
     if (hand) this.hand = hand;
     if (round) this.round = round;
     if (pool) this.pool = pool;
+    if (position) this.position = position;
   }
 
   /**
-     * @description match channel, for receiving player's action
-     * @protected
-     */
+   * @description match channel, for receiving player's action
+   * @protected
+   */
   protected channel: Observable<PlayerAction>;
 
   /**
-     * @description players in match
-     * @protected
-     */
-  protected players: Player[];
-
-  /**
-     * @description the small blind wager
-     * @protected
-     */
-  protected wager: number;
-
-  /**
-     * @description the dealer button position for each hand in the mathc
-     * @protected
-     */
-  protected position: number;
-
-  /**
-     * @description the chips for each player
-     * @protected
-     */
+   * @description the chips for each player
+   * @protected
+   */
   protected chips: number;
 
   /**
-     * @description the pool that calculate the chips after each hand and each round
-     * @protected
-     */
-  protected pool: Pool;
-
-  /**
-     * @description current hand instance
-     * @protected
-     */
+   * @description current hand instance
+   * @protected
+   */
   protected hand?: Hand;
 
   /**
-     * @description current round instance
-     * @protected
-     */
+   * @description the dealer button position for each hand in the match
+   * @protected
+   */
+  protected position: number;
+
+  /**
+   * @description the pool that calculate the chips after each hand and each round
+   * @protected
+   */
+  protected pool: Pool;
+
+  /**
+   * @description players in match
+   * @protected
+   */
+  protected players: Player[];
+
+  /**
+   * @description current round instance
+   * @protected
+   */
   protected round?: Round;
+
+  /**
+   * @description the small blind wager
+   * @protected
+   */
+  protected wager: number;
 }
 
 /**
@@ -128,54 +140,72 @@ class MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
  */
 abstract class MatchAbstract<Pool, Hand, Round, Player, PlayerAction>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
-  playing: Observable<boolean>;
+  abstract playing: Observable<boolean>;
 
   /**
-     * @description start a new match
-     * @abstract
-     */
-  abstract start();
+   * @description start a new match
+   * @abstract
+   */
+  abstract start(position?: number);
 
   /**
-     * @description pause current match
-     * @abstract
-     */
+   * @description pause current match
+   * @abstract
+   */
   abstract pause();
 
   /**
-     * @description end the match
-     */
+   * @description end the match
+   */
   abstract end();
 
   /**
-     * @description play a new hand in current match
-     */
+   * @description play a new hand in current match
+   */
   abstract play(): Observable<boolean>;
+}
+
+interface MatchSharedInteractive {
+  /**
+   * @description disposable bag
+   */
+  disposableBag: Subscription;
+
+  /**
+   * @description the collector for all subscriptions
+   */
+  interactiveCollector: {
+    [key: string]: any
+  }[]
+  /**
+   * @description clear the disposable bag
+   */
+  unsubscribe(): void
 }
 
 /**
  * @description the interface for handling the interactions that current match made
  */
-interface MatchInteractive<Match, Hand> {
+interface MatchInteractive<Match, Hand> extends MatchSharedInteractive{
   /**
-     * @description when some other subscribe this property,
-     * it will receive the match instance after it started
-     */
+   * @description when some other subscribe this property,
+   * it will receive the match instance after it started
+   */
   onStartObservable: Observable<{ match: Match }>;
   /**
-     * @description when some other subscribe this property,
-     * it will receive the match instance after it paused
-     */
+   * @description when some other subscribe this property,
+   * it will receive the match instance after it paused
+   */
   onPauseObservable: Observable<{ match: Match }>;
   /**
-     * @description when some other subscribe this property,
-     * it will receive the match instance after it ended
-     */
+   * @description when some other subscribe this property,
+   * it will receive the match instance after it ended
+   */
   onEndObservable: Observable<{ match: Match }>;
   /**
-     * @description when some other subscribe this property,
-     * it will receive the match instance and hand instance when each hand start
-     */
+   * @description when some other subscribe this property,
+   * it will receive the match instance and hand instance when each hand start
+   */
   onPlayObservable: Observable<{ match: Match, hand: Hand }>
 
   /**
@@ -213,4 +243,5 @@ export {
   MatchInteractive,
   MatchSharedBase,
   MatchSharedInitiator,
+  MatchSharedInteractive,
 };

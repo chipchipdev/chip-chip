@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { MatchSharedBase, MatchSharedInitiator } from './match.abstract';
+import { Observable, Subscription } from 'rxjs';
+import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
 
 /**
  * @description round initiator inherit from the match shared initiator
@@ -61,7 +61,8 @@ abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus
   abstract deal(player: Player, action: PlayerAction, blinded: boolean);
 }
 
-interface RoundInteractive<Round, Player> {
+interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
+
   /**
    * @description when some other subscribe this property,
    * it will receive the match instance after it started

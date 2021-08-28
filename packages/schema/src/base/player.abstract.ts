@@ -1,4 +1,5 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
+import { MatchSharedInteractive } from './match.abstract';
 
 /**
  * @description the minimum version initiator for player's constructor
@@ -141,15 +142,7 @@ abstract class PlayerAbstract<PlayerAction> {
 /**
  * @description the interface for handling the interactions that current player made
  */
-interface PlayerInteractive<Player, PlayerAction> {
-  /**
-   * @description disposable bag
-   */
-  disposableBag: Subscription[];
-  /**
-   * @description clear the disposable bag
-   */
-  unsubscribe(): void
+interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive{
 
   /**
    * @description when some other subscribe this property,

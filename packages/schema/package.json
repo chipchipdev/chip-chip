@@ -20,6 +20,11 @@
   },
   "gitHead": "3a147d02046110c55cc3fb7a76f6ae738de48fb8",
   "dependencies": {
-    "rxjs": "^7.3.0"
+    "lodash": "^4.17.21",
+    "rxjs": "^7.3.0",
+    "ts-transformer-keys": "^0.4.3"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.172"
   }
 }
