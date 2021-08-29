@@ -1,6 +1,7 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
+import { RoundStateEnum } from './round.abstract';
 
 /**
  * @description hand initiator inherit from the match shared initiator
@@ -13,7 +14,7 @@ type HandInitiator<Pool, Hand, Round, Player, PlayerAction> =
  */
 type HandStatus<Player> = {
   completed: boolean;
-  winners: Player;
+  winners?: Player[];
 };
 
 abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
@@ -21,13 +22,13 @@ abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
   /**
    * @description the state that whether current hand is playing
    */
-  playing: Observable<boolean>;
+  abstract playing: Observable<boolean>;
 
   /**
    * @description start a new hand
    * @abstract
    */
-  abstract start();
+  abstract start(): Observable<boolean>;
 
   /**
    * @description end the hand
@@ -37,7 +38,7 @@ abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
   /**
    * @description play a new round in current hand
    */
-  abstract play(): Observable<boolean>;
+  abstract play(round: RoundStateEnum): Observable<HandStatus<Player>>;
 }
 
 interface HandInteractive<Hand, Round> extends MatchSharedInteractive{

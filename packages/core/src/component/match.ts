@@ -18,11 +18,12 @@ import { Player } from './player';
 import { Hand } from './hand';
 import { Round } from './round';
 import { Pool } from './pool';
+import { PlayerAction } from './action';
 
-export class Match<PlayerAction>
-  extends MatchAbstract<Pool, Hand<PlayerAction>,
-  Round<PlayerAction>, Player<PlayerAction>, PlayerAction>
-  implements MatchInteractive<Match<PlayerAction>, Hand<PlayerAction>> {
+export class Match
+  extends MatchAbstract<Pool<Hand, Round<Hand>>, Hand,
+  Round<PlayerAction>, Player, PlayerAction>
+  implements MatchInteractive<Match, Hand> {
   playing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   start(position?: number) {
@@ -46,7 +47,7 @@ export class Match<PlayerAction>
   play(): Observable<boolean> {
     this.position = (this.position + 1) % this.players.length;
 
-    const nextHand = new Hand<Pool, Round, PlayerAction>({
+    const nextHand = new Hand({
       players: this.players,
       position: this.position,
       pool: this.pool,
@@ -59,18 +60,18 @@ export class Match<PlayerAction>
       ? this.hand.interactiveCollector
       : undefined;
 
-    previousInteractiveCollector.forEach((interaction) => {
+    previousInteractiveCollector?.forEach((interaction) => {
       const key = Object.keys(interaction)[0];
       if (isFunction(nextHand[key])) {
         nextHand[key].call(nextHand, interaction[key]);
       }
     });
 
-    this.hand.unsubscribe();
+    this.hand?.unsubscribe();
 
     this.hand = nextHand;
 
-    return this.hand.play();
+    return this.hand.start();
   }
 
   end() {
@@ -86,39 +87,39 @@ export class Match<PlayerAction>
     this.interactiveCollector = [];
   }
 
-  onStartObservable: Subject<{ match: Match<PlayerAction> }>;
+  onStartObservable: Subject<{ match: Match }>;
 
-  onPauseObservable: Subject<{ match: Match<PlayerAction> }>;
+  onPauseObservable: Subject<{ match: Match }>;
 
-  onEndObservable: Subject<{ match: Match<PlayerAction> }>;
+  onEndObservable: Subject<{ match: Match }>;
 
   onPlayObservable: Subject<{
-    match: Match<PlayerAction>;
-    hand: Hand<PlayerAction> }>;
+    match: Match;
+    hand: Hand }>;
 
   onStart(subscription: ({ match }:
-  { match: Match<PlayerAction> }) => void):
-    Observable<{ match: Match<PlayerAction> }> {
+  { match: Match }) => void):
+    Observable<{ match: Match }> {
     return undefined;
   }
 
   onPause(subscription: ({ match }:
-  { match: Match<PlayerAction> }) => void):
-    Observable<{ match: Match<PlayerAction> }> {
+  { match: Match }) => void):
+    Observable<{ match: Match }> {
     return undefined;
   }
 
   onPlay(subscription: ({ match, hand }:
-  { match: Match<PlayerAction>;
-    hand: Hand<PlayerAction> }) => void):
-    Observable<{ match: Match<PlayerAction>;
-      hand: Hand<PlayerAction> }> {
+  { match: Match;
+    hand: Hand }) => void):
+    Observable<{ match: Match;
+      hand: Hand }> {
     return undefined;
   }
 
   onEnd(subscription: ({ match }:
-  { match: Match<PlayerAction> }) => void):
-    Observable<{ match: Match<PlayerAction> }> {
+  { match: Match }) => void):
+    Observable<{ match: Match }> {
     return undefined;
   }
 }

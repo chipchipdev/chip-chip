@@ -9,27 +9,27 @@ abstract class PoolAbstract<Pool, Hand, Round, Player, PlayerAction, Pot, HandSt
   /**
    * @description all the all-in players for each hand
    */
-  allinPlayers: Player[];
+  abstract allinPlayers: Player[];
 
   /**
    * @description all pots for each player
    */
-  pots: Pot[];
+  abstract pots: Pot[];
 
   /**
    * @description handle the outcomes from hand status
    */
-  outcomes: HandStatus[];
+  abstract outcomes: HandStatus[];
 
   /**
    * @description current max pot
    */
-  pot: Pot;
+  abstract pot: Pot;
 
   /**
    * @description current max bet
    */
-  bet: number;
+  abstract bet: number;
 
   /**
    * @description create a pot for players
@@ -48,7 +48,7 @@ abstract class PoolAbstract<Pool, Hand, Round, Player, PlayerAction, Pot, HandSt
 
   abstract endRound();
 
-  abstract endHand();
+  abstract endHand(status: HandStatus);
 
   abstract validate(
     player: Player,
@@ -58,7 +58,7 @@ abstract class PoolAbstract<Pool, Hand, Round, Player, PlayerAction, Pot, HandSt
 
   abstract update(player: Player, action: PlayerAction);
 
-  abstract calculateChips(player: Player, action: PlayerAction);
+  abstract calculateChips(player: Player, action: PlayerAction): number;
 
   abstract calculateOutcome(pot: Pot);
 }

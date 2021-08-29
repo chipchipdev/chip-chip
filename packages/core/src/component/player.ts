@@ -1,13 +1,13 @@
 import {
   PlayerAbstract,
-  PlayerActionEnum,
   PlayerInitiator,
   PlayerInteractive,
 } from '@chip-chip/schema';
 import { Observable, Subject, Subscription } from 'rxjs';
+import { PlayerAction } from './action';
 
-class Player<PlayerAction> extends PlayerAbstract<PlayerAction>
-  implements PlayerInteractive<Player<PlayerAction>, PlayerAction> {
+class Player extends PlayerAbstract<PlayerAction>
+  implements PlayerInteractive<Player, PlayerAction> {
   constructor(private initiator: PlayerInitiator) {
     super(initiator);
   }
@@ -100,73 +100,73 @@ class Player<PlayerAction> extends PlayerAbstract<PlayerAction>
     throw new Error('Method not implemented.');
   }
 
-  onChipsChangeObservable: Subject<{ chips: number; player: Player<PlayerAction> }> = new Subject();
+  onChipsChangeObservable: Subject<{ chips: number; player: Player }> = new Subject();
 
   onJoinedStateChangeObservable: Subject<{
     joined: boolean;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onFoldedStateChangeObservable: Subject<{
     folded: boolean;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onAllinStateChangeObservable: Subject<{
     allin: boolean;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onBetStateChangeObservable: Subject<{
     bet: boolean;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onOptionedStateChangeObservable: Subject<{
     optioned: boolean;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onActionChangeObservable: Subject<{
     action: PlayerAction;
-    player: Player<PlayerAction>;
+    player: Player;
   }> = new Subject();
 
   onChipsChange: (
-    subscription: ({ chips, player }: { chips: number; player: Player<PlayerAction> }) => void
-  ) => Observable<{ chips: number; player: Player<PlayerAction> }> = (subscription) => {
+    subscription: ({ chips, player }: { chips: number; player: Player }) => void
+  ) => Observable<{ chips: number; player: Player }> = (subscription) => {
     const disposable = this.onChipsChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onChipsChangeObservable;
   };
 
   onJoinedStateChange: (
-    subscription: ({ joined, player }: { joined: boolean; player: Player<PlayerAction> }) => void
-  ) => Observable<{ joined: boolean; player: Player<PlayerAction> }> = (subscription) => {
+    subscription: ({ joined, player }: { joined: boolean; player: Player }) => void
+  ) => Observable<{ joined: boolean; player: Player }> = (subscription) => {
     const disposable = this.onJoinedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onJoinedStateChangeObservable;
   };
 
   onFoldedStateChange: (
-    subscription: ({ folded, player }: { folded: boolean; player: Player<PlayerAction> }) => void
-  ) => Observable<{ folded: boolean; player: Player<PlayerAction> }> = (subscription) => {
+    subscription: ({ folded, player }: { folded: boolean; player: Player }) => void
+  ) => Observable<{ folded: boolean; player: Player }> = (subscription) => {
     const disposable = this.onFoldedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onFoldedStateChangeObservable;
   };
 
   onAllinStateChange: (
-    subscription: ({ allin, player }: { allin: boolean; player: Player<PlayerAction> }) => void
-  ) => Observable<{ allin: boolean; player: Player<PlayerAction> }> = (subscription) => {
+    subscription: ({ allin, player }: { allin: boolean; player: Player }) => void
+  ) => Observable<{ allin: boolean; player: Player }> = (subscription) => {
     const disposable = this.onAllinStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onAllinStateChangeObservable;
   };
 
   onBetStateChange: (
-    subscription: ({ bet, player }: { bet: boolean; player: Player<PlayerAction> }) => void
-  ) => Observable<{ bet: boolean; player: Player<PlayerAction> }> = (subscription) => {
+    subscription: ({ bet, player }: { bet: boolean; player: Player }) => void
+  ) => Observable<{ bet: boolean; player: Player }> = (subscription) => {
     const disposable = this.onBetStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onBetStateChangeObservable;
@@ -178,9 +178,9 @@ class Player<PlayerAction> extends PlayerAbstract<PlayerAction>
       player,
     }: {
       optioned: boolean;
-      player: Player<PlayerAction>;
+      player: Player;
     }) => void
-  ) => Observable<{ optioned: boolean; player: Player<PlayerAction> }> = (subscription) => {
+  ) => Observable<{ optioned: boolean; player: Player }> = (subscription) => {
     const disposable = this.onOptionedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onOptionedStateChangeObservable;
@@ -192,9 +192,9 @@ class Player<PlayerAction> extends PlayerAbstract<PlayerAction>
       player,
     }: {
       action: PlayerAction;
-      player: Player<PlayerAction>;
+      player: Player;
     }) => void
-  ) => Observable<{ action: PlayerAction; player: Player<PlayerAction> }> = (subscription) => {
+  ) => Observable<{ action: PlayerAction; player: Player }> = (subscription) => {
     const disposable = this.onActionChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onActionChangeObservable;

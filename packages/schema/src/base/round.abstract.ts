@@ -27,18 +27,18 @@ abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus
   /**
    * @description the hand status observable, will be updated after a round is ended
    */
-  status: Observable<HandStatus>;
+  abstract status: Observable<HandStatus>;
 
   /**
    * @description a store that maintains all the actions from each player during current round
    */
-  actionMap:{ [id: string]: PlayerAction };
+  abstract actionMap:{ [id: string]: PlayerAction };
 
   /**
    * @description play a new round
    * @abstract
    */
-  abstract play();
+  abstract play(round: RoundStateEnum): Observable<HandStatus>;
 
   /**
    * @description end the round
@@ -50,7 +50,7 @@ abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus
    * @abstract
    * @param player
    */
-  abstract monitor(player: Player);
+  abstract monitor(player: Player): Observable<any>;
 
   /**
    * @description deal with the action from valid action
@@ -65,9 +65,9 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
 
   /**
    * @description when some other subscribe this property,
-   * it will receive the match instance after it started
+   * it will receive the match instance after it start to play
    */
-  onStartObservable: Observable<{ round: Round }>
+  onPlayObservable: Observable<{ round: Round }>
   /**
    * @description when some other subscribe this property,
    * it will receive the match instance after it ended
@@ -89,7 +89,7 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
    * @description add subscriptions for onStartObservable
    * @param subscription
    */
-  onStart:(subscription: ({ round }:
+  onPlay:(subscription: ({ round }:
   { round: Round }) => void)
   => Observable<{ round: Round }>
 

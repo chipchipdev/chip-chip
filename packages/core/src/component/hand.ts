@@ -1,15 +1,24 @@
-import { HandAbstract, HandInteractive } from '@chip-chip/schema';
-import { Observable, Subject, Subscription } from 'rxjs';
+import {
+  HandAbstract, HandInteractive, RoundStateEnum, PlayerActionEnum,
+} from '@chip-chip/schema';
+import {
+  asyncScheduler, from, mergeMap, Observable, scheduled, Subject, Subscription, takeUntil,
+} from 'rxjs';
+import { isFunction } from 'lodash';
+import { HandStatus } from '@chip-chip/schema/lib/base';
 import { Player } from './player';
 import { Pool } from './pool';
 import { Round } from './round';
+import { PlayerAction } from './action';
 
-export class Hand<PlayerAction>
-  extends HandAbstract<Pool, Hand<PlayerAction>,
-  Round<PlayerAction>, Player<PlayerAction>, PlayerAction>
-  implements HandInteractive<Hand<PlayerAction>, Round<PlayerAction>> {
-  constructor(initiator) {
-    super(initiator);
+export class Hand
+  extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction>
+  implements HandInteractive<Hand, Round<PlayerAction>> {
+  onPlay: (subscription: ({ hand, round }: { hand: Hand; round: Round<PlayerAction>; }) => void) => Observable<{ hand: Hand; round: Round<PlayerAction>; }>;
+
+  playing: Subject<boolean> = new Subject();
+
+  start(): Observable<boolean> {
     this.players.forEach((player) => {
       const { chips } = player.getPlayer();
       player.setJoined(chips > 0);
@@ -23,17 +32,81 @@ export class Hand<PlayerAction>
       return joined;
     });
 
-    // todo pool create pot
+    this.pool.createPot(participants, 0);
+
+    scheduled(from([
+      RoundStateEnum.PRE_FLOP,
+      RoundStateEnum.FLOP,
+      RoundStateEnum.TURN,
+      RoundStateEnum.RIVER,
+    ]), asyncScheduler)
+      .pipe(
+        takeUntil(this.playing),
+        mergeMap((round) => this.play(round)),
+      )
+      .subscribe((status) => {
+        if (status.completed) {
+          this.pool.endHand(status);
+          this.end();
+        }
+      });
+    return this.playing;
   }
 
   end() {
+    this.playing.next(false);
+    this.playing.complete();
   }
 
-  play(): Observable<boolean> {
-    return undefined;
-  }
+  play(round: RoundStateEnum): Observable<HandStatus<Player>> {
+    const nextRound = new Round({
+      players: this.players,
+      position: this.position,
+      pool: this.pool,
+      wager: this.wager,
+      channel: this.channel,
+      chips: this.chips,
+    });
 
-  start() {
+    const previousInteractiveCollector = this.round?.interactiveCollector?.length > 0
+      ? this.round.interactiveCollector
+      : undefined;
+
+    previousInteractiveCollector?.forEach((interaction) => {
+      const key = Object.keys(interaction)[0];
+      if (isFunction(nextRound[key])) {
+        nextRound[key].call(nextRound, interaction[key]);
+      }
+    });
+
+    this.round?.unsubscribe();
+
+    if (round === RoundStateEnum.PRE_FLOP) {
+      const smallBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(this.position);
+      const bigBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(smallBlindPosition);
+
+      nextRound.deal(
+        this.players[smallBlindPosition],
+        {
+          type: PlayerActionEnum.BET,
+          amount: this.wager,
+        },
+        true,
+      );
+
+      nextRound.deal(
+        this.players[bigBlindPosition],
+        {
+          type: PlayerActionEnum.BET,
+          amount: this.wager * 2,
+        },
+        true,
+      );
+    }
+
+    this.round = nextRound;
+
+    return this.round.play(round);
   }
 
   interactiveCollector: { [key: string]: any; }[] = [];
@@ -41,30 +114,36 @@ export class Hand<PlayerAction>
   disposableBag: Subscription = new Subscription();
 
   unsubscribe(): void {
-    throw new Error('Method not implemented.');
+    // throw new Error('Method not implemented.');
   }
 
-  onStartObservable: Subject<{ hand: Hand<PlayerAction> }>;
+  onStartObservable: Subject<{ hand: Hand }>;
 
-  onEndObservable: Subject<{ hand: Hand<PlayerAction> }>;
+  onEndObservable: Subject<{ hand: Hand }>;
 
-  onPlayObservable: Subject<{ hand: Hand<PlayerAction>; round: Round<PlayerAction> }>;
+  onPlayObservable: Subject<{ hand: Hand; round: Round<PlayerAction> }>;
 
   onEnd(subscription: ({ hand }:
-  { hand: Hand<PlayerAction> }) => void):
-    Observable<{ hand: Hand<PlayerAction> }> {
-    return undefined;
-  }
-
-  onPlay(subscription: ({ hand, round }:
-  { hand: Hand<PlayerAction>; round: Round }) => void):
-    Observable<{ hand: Hand<PlayerAction>; round: Round }> {
+  { hand: Hand }) => void):
+    Observable<{ hand: Hand }> {
     return undefined;
   }
 
   onStart(subscription: ({ hand }:
-  { hand: Hand<PlayerAction> }) => void):
-    Observable<{ hand: Hand<PlayerAction> }> {
+  { hand: Hand }) => void):
+    Observable<{ hand: Hand }> {
     return undefined;
+  }
+
+  private getNextPlayerIndexAfterSpecificIndex(position: number) {
+    let player: Player;
+    let index = position;
+
+    do {
+      index = (index + 1) % this.players.length;
+      player = this.players[index];
+    } while (!player?.getPlayer?.().joined || player?.getPlayer?.().folded);
+
+    return index;
   }
 }
