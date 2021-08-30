@@ -2,7 +2,7 @@ import {
   HandAbstract, HandInteractive, RoundStateEnum, PlayerActionEnum,
 } from '@chip-chip/schema';
 import {
-  asyncScheduler, from, mergeMap, Observable, scheduled, Subject, Subscription, takeUntil,
+  asyncScheduler, concatMap, from, mergeMap, Observable, scheduled, Subject, Subscription, takeUntil,
 } from 'rxjs';
 import { isFunction } from 'lodash';
 import { HandStatus } from '@chip-chip/schema/lib/base';
@@ -34,15 +34,15 @@ export class Hand
 
     this.pool.createPot(participants, 0);
 
-    scheduled(from([
+    from([
       RoundStateEnum.PRE_FLOP,
       RoundStateEnum.FLOP,
       RoundStateEnum.TURN,
       RoundStateEnum.RIVER,
-    ]), asyncScheduler)
+    ])
       .pipe(
         takeUntil(this.playing),
-        mergeMap((round) => this.play(round)),
+        concatMap((round) => this.play(round)),
       )
       .subscribe((status) => {
         if (status.completed) {
@@ -59,6 +59,8 @@ export class Hand
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
+    this.pool.playRound();
+
     const nextRound = new Round({
       players: this.players,
       position: this.position,
@@ -75,8 +77,6 @@ export class Hand
       player.setBet(false);
       player.setOptioned(false);
     });
-
-    this.pool.playRound();
 
     const previousInteractiveCollector = this.round?.interactiveCollector?.length > 0
       ? this.round.interactiveCollector

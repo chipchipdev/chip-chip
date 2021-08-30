@@ -12,7 +12,7 @@ import {
   from,
   map,
   Observable,
-  repeat,
+  repeat, ReplaySubject,
   Subject,
   Subscription,
   take,
@@ -89,9 +89,7 @@ export class Round<Hand>
               return joined && !allin;
             },
           ),
-          concatMap(
-            (player) => this.monitor(player),
-          ),
+          concatMap((p) => this.monitor(p)),
           repeat(),
           takeUntil(this.status),
         ),
@@ -112,7 +110,7 @@ export class Round<Hand>
 
   monitor(player: Player) {
     return defer(() => {
-      const message = new Subject<PlayerAction>();
+      const message = new ReplaySubject<PlayerAction>();
       const { id } = player.getPlayer();
 
       this.channel.subscribe((action) => {
@@ -248,7 +246,6 @@ export class Round<Hand>
       .length === remainingPlayers.length;
 
     const hasAllPlayersActed = this.checkIfPlayerIsLastToAct(player);
-
     if (hasAllPlayersCalled && hasAllPlayersActed) {
       this.status.next({
         completed: false,
@@ -275,12 +272,11 @@ export class Round<Hand>
   private getNextPlayerIndexAfterSpecificIndex(position: number) {
     let player: Player;
     let index = position;
-    const { joined, folded } = player.getPlayer();
 
     do {
       index = (index + 1) % this.players.length;
       player = this.players[index];
-    } while (!joined || folded);
+    } while (!player.getPlayer().joined || player.getPlayer().folded);
 
     return index;
   }

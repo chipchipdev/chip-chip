@@ -25,7 +25,6 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
 
     const wagerIncrease = action.amount - previousWager;
 
-    // eslint-disable-next-line no-param-reassign
     player.setChips(chips - wagerIncrease);
     this.pot.amount += wagerIncrease;
 
@@ -121,8 +120,6 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
   }
 
   update(player: Player, action: PlayerAction) {
-    const { action: previousAction } = player.getPlayer();
-
     switch (action.type) {
       case PlayerActionEnum.FOLD:
         this.pots.forEach((pot) => {
@@ -198,7 +195,7 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
         break;
     }
 
-    return ((previousAction?.amount ?? 0) + chips) >= action.amount;
+    return ((previousAction?.amount ?? 0) + chips) >= (action.amount ?? 0);
   }
 
   private getNextHighestWagerFromAllInPlayers(wager: number) {
