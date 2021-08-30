@@ -1,5 +1,6 @@
 import * as casual from 'casual';
 import { Player } from '../../src/component/player';
+import { PlayerAction } from '../../src/component/action';
 
 const setupFakePlayer = () => {
   const fakeUuid = casual.uuid;
@@ -136,7 +137,7 @@ describe('Player Component', () => {
       and if someone subscribe the onActionChange event,
       someone will receive the changes as well`, (done) => {
     const fakePlayer = setupFakePlayer();
-    const fakeAction = {};
+    const fakeAction = {} as PlayerAction;
 
     fakePlayer.onActionChange(({ action, player }) => {
       expect(player.getPlayer().action).toBe(fakeAction);

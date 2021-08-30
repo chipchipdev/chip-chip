@@ -1,6 +1,5 @@
 import {
-  RoundAbstract, RoundInteractive, HandStatus,
-  PlayerActionEnum,
+  HandStatus, PlayerActionEnum, RoundAbstract, RoundInteractive,
 } from '@chip-chip/schema';
 
 import {
@@ -12,7 +11,7 @@ import {
   from,
   map,
   Observable,
-  repeat, ReplaySubject,
+  repeat,
   Subject,
   Subscription,
   take,
@@ -37,23 +36,47 @@ export class Round<Hand>
 
   actionMap: { [id: string]: PlayerAction; } = {};
 
-  onPlayObservable: Observable<{ round: Round<Hand>; }>;
+  onPlayObservable: Subject<{ round: Round<Hand>; }> = new Subject();
 
-  onEndObservable: Observable<{ round: Round<Hand>; }>;
+  onEndObservable: Subject<{ round: Round<Hand>; }> = new Subject();
 
-  onMonitorObservable: Observable<{ player: Player; round: Round<Hand>; }>;
+  onMonitorObservable: Subject<{ player: Player; round: Round<Hand>; }> = new Subject();
 
-  onDealObservable: Observable<{ player: Player; round: Round<Hand>; }>;
+  onDealObservable: Subject<{ player: Player; round: Round<Hand>; }> = new Subject();
 
-  onPlay: (subscription: ({ round }: { round: Round<Hand>; }) => void) => Observable<{ round: Round<Hand>; }>;
+  onPlay:
+  (subscription: ({ round }: { round: Round<Hand>; }) => void)
+  => Observable<{ round: Round<Hand>; }> = (subscription) => {
+    const disposable = this.onPlayObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onPlayObservable;
+  };
 
-  onEnd: (subscription: ({ round }: { round: Round<Hand>; }) => void) => Observable<{ round: Round<Hand>; }>;
+  onEnd:
+  (subscription: ({ round }: { round: Round<Hand>; }) => void)
+  => Observable<{ round: Round<Hand>; }> = (subscription) => {
+    const disposable = this.onEndObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onEndObservable;
+  };
 
-  onMonitor: (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void) => Observable<{ player: Player; round: Round<Hand>; }>;
+  onMonitor:
+  (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void)
+  => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
+    const disposable = this.onMonitorObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onMonitorObservable;
+  };
 
-  onDeal: (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void) => Observable<{ player: Player; round: Round<Hand>; }>;
+  onDeal:
+  (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void)
+  => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
+    const disposable = this.onDealObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onDealObservable;
+  };
 
-  disposableBag: Subscription;
+  disposableBag: Subscription = new Subscription();
 
   interactiveCollector: { [key: string]: any; }[];
 
@@ -62,6 +85,41 @@ export class Round<Hand>
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
+    this.pool.playRound();
+
+    this.players.forEach((player) => {
+      const { chips } = player.getPlayer();
+      player.setJoined(chips > 0);
+      player.setAction(undefined);
+      player.setBet(false);
+      player.setOptioned(false);
+    });
+
+    if (round === RoundStateEnum.PRE_FLOP) {
+      const smallBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(this.position);
+      const bigBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(smallBlindPosition);
+
+      this.deal(
+        this.players[smallBlindPosition],
+        {
+          type: PlayerActionEnum.BET,
+          amount: this.wager,
+        },
+        true,
+      );
+
+      this.deal(
+        this.players[bigBlindPosition],
+        {
+          type: PlayerActionEnum.BET,
+          amount: this.wager * 2,
+        },
+        true,
+      );
+
+      this.players[bigBlindPosition].setOptioned(true);
+    }
+
     const orderedPlayers = Round.sortPlayersOrderByRound(
       this.players,
       this.position,
@@ -69,8 +127,8 @@ export class Round<Hand>
     );
 
     const remainingPlayers = this.players.filter((player) => {
-      const { joined, allin } = player.getPlayer();
-      return joined && !allin;
+      const { folded, allin } = player.getPlayer();
+      return !folded && !allin;
     });
 
     if (remainingPlayers.length < 2) {
@@ -85,8 +143,8 @@ export class Round<Hand>
         .pipe(
           filter(
             (player: Player) => {
-              const { joined, allin } = player.getPlayer();
-              return joined && !allin;
+              const { folded, allin } = player.getPlayer();
+              return !folded && !allin;
             },
           ),
           concatMap((p) => this.monitor(p)),
@@ -101,16 +159,27 @@ export class Round<Hand>
 
     queriedPlayers.connect();
 
+    this.onPlayObservable.next({
+      round: this,
+    });
+
     return this.status;
   }
 
   end() {
-    throw new Error('Method not implemented.');
+    // todo end
+    this.onEndObservable.next({
+      round: this,
+    });
   }
 
   monitor(player: Player) {
     return defer(() => {
-      const message = new ReplaySubject<PlayerAction>();
+      this.onMonitorObservable.next({
+        player,
+        round: this,
+      });
+      const message = new Subject<PlayerAction>();
       const { id } = player.getPlayer();
 
       this.channel.subscribe((action) => {
@@ -157,6 +226,11 @@ export class Round<Hand>
       default:
         break;
     }
+
+    this.onDealObservable.next({
+      player,
+      round: this,
+    });
   }
 
   private dealWithBet(player: Player, blinded: boolean) {
@@ -176,8 +250,8 @@ export class Round<Hand>
     }
 
     const betable = !!this.players.find((such) => {
-      const { joined, bet, chips } = such.getPlayer();
-      return joined && !bet && chips > 0;
+      const { folded, bet, chips } = such.getPlayer();
+      return !folded && !bet && chips > 0;
     });
 
     if (!betable && !blinded) {
@@ -190,11 +264,11 @@ export class Round<Hand>
   private dealWithFolded(player: Player) {
     const hasAllPlayersActed = this.checkIfPlayerIsLastToAct(player);
 
-    player.setJoined(false);
+    player.setFolded(true);
 
     const remainingPlayers = this.players.filter((p) => {
-      const { joined } = p.getPlayer();
-      return joined;
+      const { folded } = p.getPlayer();
+      return !folded;
     });
 
     if (remainingPlayers.length === 1) {
@@ -211,8 +285,8 @@ export class Round<Hand>
 
   private dealWithChecked(player: Player) {
     const remainingPlayers = this.players.filter((p) => {
-      const { joined, bet, allin } = p.getPlayer();
-      return joined && allin && !bet;
+      const { folded, bet, allin } = p.getPlayer();
+      return !folded && allin && !bet;
     });
 
     const hasAllPlayersChecked = remainingPlayers
@@ -234,8 +308,8 @@ export class Round<Hand>
 
   private dealWithCalled(player: Player) {
     const remainingPlayers = this.players.filter((p) => {
-      const { joined, allin, bet } = p.getPlayer();
-      return joined && allin && !bet;
+      const { folded, allin, bet } = p.getPlayer();
+      return !folded && allin && !bet;
     });
 
     const hasAllPlayersCalled = remainingPlayers

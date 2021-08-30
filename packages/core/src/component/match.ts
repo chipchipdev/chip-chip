@@ -1,6 +1,6 @@
 import { MatchAbstract, MatchInteractive } from '@chip-chip/schema';
 import {
-  asyncScheduler,
+  asapScheduler,
   BehaviorSubject,
   mergeMap,
   Observable,
@@ -29,7 +29,7 @@ export class Match
   start(position?: number) {
     this.position = (position ?? this.position) ?? Math.floor(Math.random() * this.players.length);
 
-    scheduled(of(true), asyncScheduler)
+    scheduled(of(true), asapScheduler)
       .pipe(
         takeWhile(() => this.playing.value),
         mergeMap(() => this.play()),

@@ -28,8 +28,8 @@ export class Hand
     });
 
     const participants = this.players.filter((player) => {
-      const { joined } = player.getPlayer();
-      return joined;
+      const { folded } = player.getPlayer();
+      return !folded;
     });
 
     this.pool.createPot(participants, 0);
@@ -59,8 +59,6 @@ export class Hand
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
-    this.pool.playRound();
-
     const nextRound = new Round({
       players: this.players,
       position: this.position,
@@ -68,14 +66,6 @@ export class Hand
       wager: this.wager,
       channel: this.channel,
       chips: this.chips,
-    });
-
-    this.players.forEach((player) => {
-      const { chips } = player.getPlayer();
-      player.setFolded(!(chips > 0));
-      player.setAction(undefined);
-      player.setBet(false);
-      player.setOptioned(false);
     });
 
     const previousInteractiveCollector = this.round?.interactiveCollector?.length > 0
@@ -90,31 +80,6 @@ export class Hand
     });
 
     this.round?.unsubscribe();
-
-    if (round === RoundStateEnum.PRE_FLOP) {
-      const smallBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(this.position);
-      const bigBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(smallBlindPosition);
-
-      nextRound.deal(
-        this.players[smallBlindPosition],
-        {
-          type: PlayerActionEnum.BET,
-          amount: this.wager,
-        },
-        true,
-      );
-
-      nextRound.deal(
-        this.players[bigBlindPosition],
-        {
-          type: PlayerActionEnum.BET,
-          amount: this.wager * 2,
-        },
-        true,
-      );
-
-      this.players[bigBlindPosition].setOptioned(true);
-    }
 
     this.round = nextRound;
 
