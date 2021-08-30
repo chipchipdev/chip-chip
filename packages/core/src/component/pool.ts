@@ -132,11 +132,9 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
       case PlayerActionEnum.CHECK:
         break;
       case PlayerActionEnum.CALL:
-        player.setAction({
-          ...previousAction,
-          amount: this.bet,
-        });
-        this.update(player, action);
+        // eslint-disable-next-line no-param-reassign
+        action.amount = this.bet;
+        this.calculateChips(player, action);
         break;
       case PlayerActionEnum.BET:
       case PlayerActionEnum.RAISE:
@@ -200,7 +198,7 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
         break;
     }
 
-    return (previousAction?.amount ?? 0) + chips >= action.amount;
+    return ((previousAction?.amount ?? 0) + chips) >= action.amount;
   }
 
   private getNextHighestWagerFromAllInPlayers(wager: number) {

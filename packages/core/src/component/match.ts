@@ -27,7 +27,7 @@ export class Match
   playing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   start(position?: number) {
-    this.position = position ?? this.position ?? Math.floor(Math.random() * this.players.length);
+    this.position = (position ?? this.position) ?? Math.floor(Math.random() * this.players.length);
 
     scheduled(of(true), asyncScheduler)
       .pipe(

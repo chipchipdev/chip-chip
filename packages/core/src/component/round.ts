@@ -62,16 +62,6 @@ export class Round<Hand>
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
-    this.players.forEach((player) => {
-      const { chips } = player.getPlayer();
-      player.setFolded(!(chips > 0));
-      player.setAction(undefined);
-      player.setBet(false);
-      player.setOptioned(false);
-    });
-
-    this.pool.playRound();
-
     const orderedPlayers = Round.sortPlayersOrderByRound(
       this.players,
       this.position,

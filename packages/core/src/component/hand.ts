@@ -68,6 +68,16 @@ export class Hand
       chips: this.chips,
     });
 
+    this.players.forEach((player) => {
+      const { chips } = player.getPlayer();
+      player.setFolded(!(chips > 0));
+      player.setAction(undefined);
+      player.setBet(false);
+      player.setOptioned(false);
+    });
+
+    this.pool.playRound();
+
     const previousInteractiveCollector = this.round?.interactiveCollector?.length > 0
       ? this.round.interactiveCollector
       : undefined;
@@ -102,6 +112,8 @@ export class Hand
         },
         true,
       );
+
+      this.players[bigBlindPosition].setOptioned(true);
     }
 
     this.round = nextRound;
