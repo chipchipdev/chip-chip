@@ -183,7 +183,7 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
     // check if bet enough
     switch (action.type) {
       case PlayerActionEnum.CHECK:
-        if (player.getPlayer().action?.amount ?? this.bet > 0) return false;
+        if ((player.getPlayer().action?.amount ?? 0) < this.bet) return false;
         break;
       case PlayerActionEnum.RAISE:
         if (action.amount <= this.bet) return false;

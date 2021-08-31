@@ -199,4 +199,33 @@ describe('Round Component', () => {
       });
     });
   });
+
+  it(`should let big blind has one more opportunity to check
+                 and after he(she) checked, finish current round`,
+  (done) => {
+    const { round, channel, players } = roundSetup(1);
+
+    round.status.subscribe(({ completed }) => {
+      if (!completed) done();
+    });
+
+    round.play(RoundStateEnum.PRE_FLOP);
+
+    setTimeout(() => {
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+    });
+  });
 });

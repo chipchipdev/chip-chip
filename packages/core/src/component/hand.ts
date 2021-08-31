@@ -14,7 +14,9 @@ import { PlayerAction } from './action';
 export class Hand
   extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction>
   implements HandInteractive<Hand, Round<PlayerAction>> {
-  onPlay: (subscription: ({ hand, round }: { hand: Hand; round: Round<PlayerAction>; }) => void) => Observable<{ hand: Hand; round: Round<PlayerAction>; }>;
+  onPlay: (subscription: ({ hand, round }:
+  { hand: Hand; round: Round<PlayerAction>; }) => void)
+  => Observable<{ hand: Hand; round: Round<PlayerAction>; }>;
 
   playing: Subject<boolean> = new Subject();
 
