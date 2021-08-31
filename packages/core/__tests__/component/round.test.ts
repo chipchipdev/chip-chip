@@ -41,190 +41,313 @@ const roundSetup = (position: number) => {
 };
 
 describe('Round Component', () => {
-  it(`should auto bet the small blinds
+  describe('pre flop round', () => {
+    it(`should auto bet the small blinds
             and big blinds during the pre flop round`,
-  () => {
-    const { round, players } = roundSetup(1);
-    round.play(RoundStateEnum.PRE_FLOP);
-    expect(players[2].getPlayer().chips).toBe(999);
-    expect(players[0].getPlayer().chips).toBe(998);
-  });
-
-  it('should let the UTG have the ability to fold', (done) => {
-    const { round, channel, players } = roundSetup(1);
-
-    let doneDuringMonitor = false;
-    let doneDuringDeal = false;
-
-    round.onMonitor(({ player }) => {
-      if (doneDuringMonitor) return;
-      expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
-      doneDuringMonitor = true;
-      if (doneDuringDeal && doneDuringMonitor) done();
+    () => {
+      const { round, players } = roundSetup(1);
+      round.play(RoundStateEnum.PRE_FLOP);
+      expect(players[2].getPlayer().chips).toBe(999);
+      expect(players[0].getPlayer().chips).toBe(998);
     });
 
-    round.onDeal(({ player }) => {
-      if (player.getPlayer().id === players[1].getPlayer().id) {
-        expect(player.getPlayer().folded).toBe(true);
-        doneDuringDeal = true;
+    it('should let the UTG have the ability to fold', (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      let doneDuringMonitor = false;
+      let doneDuringDeal = false;
+
+      round.onMonitor(({ player }) => {
+        if (doneDuringMonitor) return;
+        expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
+        doneDuringMonitor = true;
         if (doneDuringDeal && doneDuringMonitor) done();
-      }
-    });
-
-    round.play(RoundStateEnum.PRE_FLOP);
-
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.FOLD,
       });
-    });
-  });
 
-  it('should let the UTG have the ability to call', (done) => {
-    const { round, channel, players } = roundSetup(1);
-
-    let doneDuringMonitor = false;
-    let doneDuringDeal = false;
-
-    round.onMonitor(({ player }) => {
-      if (doneDuringMonitor) return;
-      expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
-      doneDuringMonitor = true;
-      if (doneDuringDeal && doneDuringMonitor) done();
-    });
-
-    round.onDeal(({ player }) => {
-      if (player.getPlayer().id === players[1].getPlayer().id) {
-        expect(player.getPlayer().chips).toBe(998);
-        doneDuringDeal = true;
-        if (doneDuringDeal && doneDuringMonitor) done();
-      }
-    });
-
-    round.play(RoundStateEnum.PRE_FLOP);
-
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CALL,
+      round.onDeal(({ player }) => {
+        if (player.getPlayer().id === players[1].getPlayer().id) {
+          expect(player.getPlayer().folded).toBe(true);
+          doneDuringDeal = true;
+          if (doneDuringDeal && doneDuringMonitor) done();
+        }
       });
-    });
-  });
 
-  it('should let the UTG have the ability to raise', (done) => {
-    const { round, channel, players } = roundSetup(1);
+      round.play(RoundStateEnum.PRE_FLOP);
 
-    let doneDuringMonitor = false;
-    let doneDuringDeal = false;
-
-    round.onMonitor(({ player }) => {
-      if (doneDuringMonitor) return;
-      expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
-      doneDuringMonitor = true;
-      if (doneDuringDeal && doneDuringMonitor) done();
-    });
-
-    round.onDeal(({ player }) => {
-      if (player.getPlayer().id === players[1].getPlayer().id) {
-        expect(player.getPlayer().chips).toBe(990);
-        doneDuringDeal = true;
-        if (doneDuringDeal && doneDuringMonitor) done();
-      }
-    });
-
-    round.play(RoundStateEnum.PRE_FLOP);
-
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.RAISE,
-        amount: 10,
-      });
-    });
-  });
-
-  it('shouldn\'t let the UTG have the ability to bet', (done) => {
-    const { round, channel, players } = roundSetup(1);
-
-    const handler = jest.fn();
-
-    round.onDeal(({ player }) => {
-      if (player.getPlayer().id === players[1].getPlayer().id) {
-        handler();
-      }
-    });
-
-    round.onMonitor(() => {
       setTimeout(() => {
-        expect(handler).not.toBeCalled();
-        done();
-      }, 3000);
-    });
-
-    round.play(RoundStateEnum.PRE_FLOP);
-
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.BET,
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
       });
     });
-  });
 
-  it('shouldn\'t let the UTG have the ability to check', (done) => {
-    const { round, channel, players } = roundSetup(1);
+    it('should let the UTG have the ability to call', (done) => {
+      const { round, channel, players } = roundSetup(1);
 
-    const handler = jest.fn();
+      let doneDuringMonitor = false;
+      let doneDuringDeal = false;
 
-    round.onDeal(({ player }) => {
-      if (player.getPlayer().id === players[1].getPlayer().id) {
-        handler();
-      }
-    });
+      round.onMonitor(({ player }) => {
+        if (doneDuringMonitor) return;
+        expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
+        doneDuringMonitor = true;
+        if (doneDuringDeal && doneDuringMonitor) done();
+      });
 
-    round.onMonitor(() => {
+      round.onDeal(({ player }) => {
+        if (player.getPlayer().id === players[1].getPlayer().id) {
+          expect(player.getPlayer().chips).toBe(998);
+          doneDuringDeal = true;
+          if (doneDuringDeal && doneDuringMonitor) done();
+        }
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
       setTimeout(() => {
-        expect(handler).not.toBeCalled();
-        done();
-      }, 3000);
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+      });
     });
 
-    round.play(RoundStateEnum.PRE_FLOP);
+    it('should let the UTG have the ability to raise', (done) => {
+      const { round, channel, players } = roundSetup(1);
 
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CHECK,
+      let doneDuringMonitor = false;
+      let doneDuringDeal = false;
+
+      round.onMonitor(({ player }) => {
+        if (doneDuringMonitor) return;
+        expect(player.getPlayer().id).toBe(players[1].getPlayer().id);
+        doneDuringMonitor = true;
+        if (doneDuringDeal && doneDuringMonitor) done();
+      });
+
+      round.onDeal(({ player }) => {
+        if (player.getPlayer().id === players[1].getPlayer().id) {
+          expect(player.getPlayer().chips).toBe(990);
+          doneDuringDeal = true;
+          if (doneDuringDeal && doneDuringMonitor) done();
+        }
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 10,
+        });
+      });
+    });
+
+    it('shouldn\'t let the UTG have the ability to bet', (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      const handler = jest.fn();
+
+      round.onDeal(({ player }) => {
+        if (player.getPlayer().id === players[1].getPlayer().id) {
+          handler();
+        }
+      });
+
+      round.onMonitor(() => {
+        setTimeout(() => {
+          expect(handler).not.toBeCalled();
+          done();
+        }, 3000);
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.BET,
+        });
+      });
+    });
+
+    it('shouldn\'t let the UTG have the ability to check', (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      const handler = jest.fn();
+
+      round.onDeal(({ player }) => {
+        if (player.getPlayer().id === players[1].getPlayer().id) {
+          handler();
+        }
+      });
+
+      round.onMonitor(() => {
+        setTimeout(() => {
+          expect(handler).not.toBeCalled();
+          done();
+        }, 3000);
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CHECK,
+        });
+      });
+    });
+
+    it(`should let big blind has one more opportunity to check
+            and after he(she) checked, finish current round`,
+    (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      round.status.subscribe(({ completed }) => {
+        if (!completed) done();
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CHECK,
+        });
+      });
+    });
+
+    it(`should let big blind has one more opportunity to raise
+            and after he(she) checked, finish current round`,
+    (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      round.status.subscribe(({ completed }) => {
+        if (!completed) {
+          done();
+        }
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 10,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+      });
+    });
+
+    it(`should let big blind be the winner
+            and after others folded`,
+    (done) => {
+      const { round, channel, players } = roundSetup(1);
+
+      round.status.subscribe(({ completed }) => {
+        if (completed) done();
+      });
+
+      round.play(RoundStateEnum.PRE_FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
       });
     });
   });
 
-  it(`should let big blind has one more opportunity to check
-                 and after he(she) checked, finish current round`,
-  (done) => {
-    const { round, channel, players } = roundSetup(1);
+  describe('other round', () => {
+    it('should complete the hand when only one player left', (done) => {
+      const { round, channel, players } = roundSetup(1);
 
-    round.status.subscribe(({ completed }) => {
-      if (!completed) done();
+      round.status.subscribe(({ completed }) => {
+        if (completed) done();
+      });
+
+      round.play(RoundStateEnum.FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+          amount: 0,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+      });
     });
 
-    round.play(RoundStateEnum.PRE_FLOP);
+    it(`should end the round but don't 
+    complete the hand when only more than one players left`,
+    (done) => {
+      const { round, channel, players } = roundSetup(1);
 
-    setTimeout(() => {
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CALL,
+      round.status.subscribe(({ completed }) => {
+        if (!completed) done();
       });
 
-      channel.next({
-        id: players[2].getPlayer().id,
-        type: PlayerActionEnum.CALL,
-      });
+      round.play(RoundStateEnum.FLOP);
 
-      channel.next({
-        id: players[0].getPlayer().id,
-        type: PlayerActionEnum.CHECK,
+      setTimeout(() => {
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 10,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
       });
     });
   });

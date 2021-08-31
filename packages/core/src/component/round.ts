@@ -44,6 +44,8 @@ export class Round<Hand>
 
   onDealObservable: Subject<{ player: Player; round: Round<Hand>; }> = new Subject();
 
+  private orderedPlayers: Player[];
+
   onPlay:
   (subscription: ({ round }: { round: Round<Hand>; }) => void)
   => Observable<{ round: Round<Hand>; }> = (subscription) => {
@@ -120,7 +122,7 @@ export class Round<Hand>
       this.players[bigBlindPosition].setOptioned(true);
     }
 
-    const orderedPlayers = Round.sortPlayersOrderByRound(
+    this.orderedPlayers = Round.sortPlayersOrderByRound(
       this.players,
       this.position,
       round,
@@ -139,7 +141,7 @@ export class Round<Hand>
     }
 
     const queriedPlayers = connectable(
-      from(orderedPlayers)
+      from(this.orderedPlayers)
         .pipe(
           filter(
             (player: Player) => {
@@ -243,15 +245,15 @@ export class Round<Hand>
 
     player.setBet(true);
 
-    const { allin } = player.getPlayer();
+    const { chips } = player.getPlayer();
 
-    if (allin === true) {
+    if (chips === 0) {
       player.setAllin(true);
     }
 
     const betable = !!this.players.find((such) => {
-      const { folded, bet, chips } = such.getPlayer();
-      return !folded && !bet && chips > 0;
+      const { folded, bet, chips: c } = such.getPlayer();
+      return !folded && !bet && c > 0;
     });
 
     if (!betable && !blinded) {
@@ -358,7 +360,7 @@ export class Round<Hand>
   private checkIfPlayerIsLastToAct(
     actingPlayer: Player,
   ) {
-    const remainingPlayers = this.players.filter((player) => {
+    const remainingPlayers = this.orderedPlayers.filter((player) => {
       const { joined, folded } = player.getPlayer();
       return !folded && joined;
     });

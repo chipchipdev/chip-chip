@@ -186,10 +186,10 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
         if ((player.getPlayer().action?.amount ?? 0) < this.bet) return false;
         break;
       case PlayerActionEnum.RAISE:
-        if (action.amount <= this.bet) return false;
+        if ((action.amount ?? 0) <= this.bet) return false;
         break;
       case PlayerActionEnum.BET:
-        if (action.amount < this.bet) return false;
+        if ((action.amount ?? 0) < this.bet) return false;
         break;
       default:
         break;
