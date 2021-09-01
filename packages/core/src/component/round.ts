@@ -145,9 +145,7 @@ export class Round<Hand>
 
     if (remainingPlayers.length < 2) {
       this.status.next({ completed: false });
-      return new BehaviorSubject<HandStatus<Player>>({
-        completed: false,
-      });
+      return undefined;
     }
 
     const queriedPlayers = connectable(
@@ -165,13 +163,13 @@ export class Round<Hand>
         ),
     );
 
-    this.status.subscribe((s) => {
+    this.disposableBag.add(this.status.subscribe((s) => {
       this.pool.endRound();
       this.status.complete();
       status.next(s);
-    });
+    }));
 
-    queriedPlayers.connect();
+    this.disposableBag.add(queriedPlayers.connect());
 
     this.onPlayObservable.next({
       round: this,
@@ -199,7 +197,7 @@ export class Round<Hand>
       const message = new Subject<PlayerAction>();
       const { id } = player.getPlayer();
 
-      this.channel.subscribe((action) => {
+      this.disposableBag.add(this.channel.subscribe((action) => {
         if (
           id === action.id
             && this.pool.validate(
@@ -208,11 +206,11 @@ export class Round<Hand>
         ) {
           message.next(action);
         }
-      });
+      }));
 
       const source = connectable(message);
 
-      source.connect();
+      this.disposableBag.add(source.connect());
 
       return source.pipe(
         take(1),

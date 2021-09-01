@@ -63,7 +63,7 @@ export class Hand
       RoundStateEnum.RIVER,
     ])
       .pipe(
-        takeWhile(() => !this.status.value.completed),
+        takeWhile(() => !this.status.getValue().completed),
         concatMap((round) => this.play(round)),
       )
       .subscribe();
@@ -83,10 +83,7 @@ export class Hand
   }
 
   end() {
-    if (!this.round?.status) {
-      this.round.status.complete();
-    }
-
+    // this.round?.status?.complete();
     this.status.complete();
 
     this.onEndObservable.next({ hand: this });

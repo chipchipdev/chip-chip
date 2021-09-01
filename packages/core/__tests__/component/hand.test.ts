@@ -129,67 +129,219 @@ describe('Hand Component', () => {
     },
   );
 
-  it('should settle the chips result if there is a winner in each round', (done) => {
-    const { hand, channel, players } = initiator;
+  it('should settle the chips result if there is a winner in each round',
+    (done) => {
+      const { hand, channel, players } = initiator;
 
-    hand.onEnd(() => {
-      if (players[1].getPlayer().chips === 1014) {
-        done();
-      }
-    });
+      hand.onEnd(() => {
+        if (players[1].getPlayer().chips === 1014) {
+          done();
+        }
+      });
 
-    hand.start();
+      hand.start();
 
-    setTimeout(() => {
+      setTimeout(() => {
       // pre-flop
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CALL,
-      });
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
 
-      channel.next({
-        id: players[2].getPlayer().id,
-        type: PlayerActionEnum.CALL,
-      });
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
 
-      channel.next({
-        id: players[0].getPlayer().id,
-        type: PlayerActionEnum.CHECK,
-      });
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CHECK,
+        });
 
-      // flop
-      channel.next({
-        id: players[2].getPlayer().id,
-        type: PlayerActionEnum.BET,
-        amount: 10,
-      });
+        setTimeout(() => {
+        // flop
+          channel.next({
+            id: players[2].getPlayer().id,
+            type: PlayerActionEnum.BET,
+            amount: 10,
+          });
 
-      channel.next({
-        id: players[0].getPlayer().id,
-        type: PlayerActionEnum.FOLD,
-      });
+          channel.next({
+            id: players[0].getPlayer().id,
+            type: PlayerActionEnum.FOLD,
+          });
 
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CALL,
-      });
+          channel.next({
+            id: players[1].getPlayer().id,
+            type: PlayerActionEnum.CALL,
+          });
+        });
 
-      // TURN
-      channel.next({
-        id: players[2].getPlayer().id,
-        type: PlayerActionEnum.CHECK,
-      });
+        setTimeout(() => {
+        // TURN
+          channel.next({
+            id: players[2].getPlayer().id,
+            type: PlayerActionEnum.CHECK,
+          });
 
-      channel.next({
-        id: players[1].getPlayer().id,
-        type: PlayerActionEnum.CHECK,
-      });
+          channel.next({
+            id: players[1].getPlayer().id,
+            type: PlayerActionEnum.CHECK,
+          });
 
-      // RIVER
-      channel.next({
-        id: players[2].getPlayer().id,
-        type: PlayerActionEnum.FOLD,
+          // RIVER
+          channel.next({
+            id: players[2].getPlayer().id,
+            type: PlayerActionEnum.FOLD,
+          });
+        });
       });
     });
-  });
+
+  it('should settle the chips result if there is a winner in each round( for all-in player )',
+    (done) => {
+      const { hand, channel, players } = initiator;
+
+      hand.onEnd(() => {
+        if (players[2].getPlayer().chips === 1004) done();
+      });
+
+      hand.start();
+
+      setTimeout(() => {
+      // pre-flop
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CHECK,
+        });
+
+        setTimeout(() => {
+        // flop
+          channel.next({
+            id: players[2].getPlayer().id,
+            type: PlayerActionEnum.BET,
+            amount: 998,
+          });
+
+          channel.next({
+            id: players[0].getPlayer().id,
+            type: PlayerActionEnum.FOLD,
+          });
+
+          channel.next({
+            id: players[1].getPlayer().id,
+            type: PlayerActionEnum.FOLD,
+          });
+        });
+      });
+    });
+
+  it.only('should calculate the right answer that if there are many complex actions that could decide the winner',
+    (done) => {
+      const { hand, channel, players } = initiator;
+
+      hand.onEnd(() => {
+        console.log(players.map((p) => p.getPlayer().chips));
+        done();
+      });
+
+      hand.start();
+
+      setTimeout(() => {
+      // pre-flop
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 10,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 20,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 50,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+        //
+        // setTimeout(() => {
+        // // flop
+        //   channel.next({
+        //     id: players[2].getPlayer().id,
+        //     type: PlayerActionEnum.BET,
+        //     amount: 50,
+        //   });
+        //
+        //   channel.next({
+        //     id: players[0].getPlayer().id,
+        //     type: PlayerActionEnum.CALL,
+        //   });
+        //
+        //   channel.next({
+        //     id: players[1].getPlayer().id,
+        //     type: PlayerActionEnum.CALL,
+        //   });
+        // }, 200);
+        //
+        // setTimeout(() => {
+        //   // turn
+        //   channel.next({
+        //     id: players[2].getPlayer().id,
+        //     type: PlayerActionEnum.BET,
+        //     amount: 100,
+        //   });
+        //
+        //   channel.next({
+        //     id: players[0].getPlayer().id,
+        //     type: PlayerActionEnum.FOLD,
+        //   });
+        //
+        //   channel.next({
+        //     id: players[1].getPlayer().id,
+        //     type: PlayerActionEnum.CALL,
+        //   });
+        // }, 400);
+        //
+        // setTimeout(() => {
+        //   // river
+        //   channel.next({
+        //     id: players[2].getPlayer().id,
+        //     type: PlayerActionEnum.FOLD,
+        //   });
+        // }, 600);
+      });
+    });
 });
