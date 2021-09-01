@@ -43,7 +43,7 @@ abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus
    * @description play a new round
    * @abstract
    */
-  abstract play(round: RoundStateEnum): Observable<HandStatus>;
+  abstract play(round: RoundStateEnum, status: Observable<HandStatus>): Observable<HandStatus>;
 
   /**
    * @description end the round

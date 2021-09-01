@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 
 import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
 import { RoundStateEnum } from './round.abstract';
+import { Player } from '../../../core/src/component/player';
 
 /**
  * @description hand initiator inherit from the match shared initiator
@@ -20,15 +21,15 @@ type HandStatus<Player> = {
 abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
   /**
-   * @description the state that whether current hand is playing
+   * @description the hand status observable, will be updated after a round is ended
    */
-  abstract playing: Observable<boolean>;
+  abstract status: Observable<HandStatus<Player>>;
 
   /**
    * @description start a new hand
    * @abstract
    */
-  abstract start(): Observable<boolean>;
+  abstract start(): Observable<HandStatus<Player>>;
 
   /**
    * @description end the hand

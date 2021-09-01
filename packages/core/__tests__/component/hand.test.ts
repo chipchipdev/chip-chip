@@ -74,18 +74,66 @@ describe('Hand Component', () => {
     });
   });
 
-  it('should migrate the subscriptions from pre-flop to flop round when round changed', (done) => {
-    const { hand, channel, players } = initiator;
+  it(
+    'should migrate the subscriptions from pre-flop to flop and turn round when round changed',
+    (done) => {
+      const { hand, channel, players } = initiator;
 
-    const round = hand.getRound();
+      const round = hand.getRound();
 
-    round?.onPlay(({ round: r }) => {
-      if (
-        r.is === RoundStateEnum.TURN
+      round?.onPlay(({ round: r }) => {
+        if (
+          r.is === RoundStateEnum.TURN
           && !players
             .filter((p) => p.getPlayer().joined && !p.getPlayer().folded)
             .find((p) => p.getPlayer().chips !== 988)
-      ) {
+        ) {
+          done();
+        }
+      });
+
+      hand.start();
+
+      setTimeout(() => {
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CHECK,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.BET,
+          amount: 10,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+      });
+    },
+  );
+
+  it('should settle the chips result if there is a winner in each round', (done) => {
+    const { hand, channel, players } = initiator;
+
+    hand.onEnd(() => {
+      if (players[1].getPlayer().chips === 1014) {
         done();
       }
     });
@@ -93,6 +141,7 @@ describe('Hand Component', () => {
     hand.start();
 
     setTimeout(() => {
+      // pre-flop
       channel.next({
         id: players[1].getPlayer().id,
         type: PlayerActionEnum.CALL,
@@ -108,6 +157,7 @@ describe('Hand Component', () => {
         type: PlayerActionEnum.CHECK,
       });
 
+      // flop
       channel.next({
         id: players[2].getPlayer().id,
         type: PlayerActionEnum.BET,
@@ -122,6 +172,23 @@ describe('Hand Component', () => {
       channel.next({
         id: players[1].getPlayer().id,
         type: PlayerActionEnum.CALL,
+      });
+
+      // TURN
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      // RIVER
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.FOLD,
       });
     });
   });

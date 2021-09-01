@@ -89,7 +89,10 @@ export class Round<Hand>
     this.disposableBag.unsubscribe();
   }
 
-  play(round: RoundStateEnum): Observable<HandStatus<Player>> {
+  play(
+    round: RoundStateEnum,
+    status: BehaviorSubject<HandStatus<Player>>,
+  ): Observable<HandStatus<Player>> {
     this.is = round;
     this.pool.playRound();
 
@@ -162,9 +165,10 @@ export class Round<Hand>
         ),
     );
 
-    this.status.subscribe(() => {
+    this.status.subscribe((s) => {
       this.pool.endRound();
       this.status.complete();
+      status.next(s);
     });
 
     queriedPlayers.connect();

@@ -4,12 +4,13 @@ import {
   RoundStateEnum,
 } from '@chip-chip/schema';
 import {
+  BehaviorSubject,
   concatMap,
   from,
   Observable,
   Subject,
   Subscription,
-  takeUntil,
+  takeWhile,
 } from 'rxjs';
 import { isFunction } from 'lodash';
 import { HandStatus } from '@chip-chip/schema/lib/base';
@@ -21,7 +22,10 @@ import { PlayerAction } from './action';
 export class Hand
   extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction>
   implements HandInteractive<Hand, Round<Hand>> {
-  playing: Subject<boolean> = new Subject();
+  status: BehaviorSubject<HandStatus<Player>> = new BehaviorSubject({
+    winners: [],
+    completed: false,
+  });
 
   round = {
     interactiveCollector: [],
@@ -36,7 +40,7 @@ export class Hand
     return this.round;
   }
 
-  start(): Observable<boolean> {
+  start(): Observable<HandStatus<Player>> {
     this.players.forEach((player) => {
       const { chips } = player.getPlayer();
       player.setJoined(chips > 0);
@@ -46,8 +50,8 @@ export class Hand
     });
 
     const participants = this.players.filter((player) => {
-      const { folded } = player.getPlayer();
-      return !folded;
+      const { joined } = player.getPlayer();
+      return joined;
     });
 
     this.pool.createPot(participants, 0);
@@ -59,21 +63,23 @@ export class Hand
       RoundStateEnum.RIVER,
     ])
       .pipe(
-        takeUntil(this.playing),
+        takeWhile(() => !this.status.value.completed),
         concatMap((round) => this.play(round)),
       )
-      .subscribe((status) => {
-        if (status.completed) {
-          this.pool.endHand(status);
-          this.end();
-        }
-      });
+      .subscribe();
+
+    this.status.subscribe((status) => {
+      if (status.completed) {
+        this.pool.endHand(status);
+        this.end();
+      }
+    });
 
     this.onStartObservable.next({
       hand: this,
     });
 
-    return this.playing;
+    return this.status;
   }
 
   end() {
@@ -81,8 +87,7 @@ export class Hand
       this.round.status.complete();
     }
 
-    this.playing.next(false);
-    this.playing.complete();
+    this.status.complete();
 
     this.onEndObservable.next({ hand: this });
   }
@@ -118,7 +123,7 @@ export class Hand
       is: round,
     });
 
-    return this.round.play(round);
+    return this.round.play(round, this.status);
   }
 
   interactiveCollector: { [key: string]: any; }[] = [];
@@ -158,16 +163,4 @@ export class Hand
     this.disposableBag.add(disposable);
     return this.onPlayObservable;
   };
-
-  private getNextPlayerIndexAfterSpecificIndex(position: number) {
-    let player: Player;
-    let index = position;
-
-    do {
-      index = (index + 1) % this.players.length;
-      player = this.players[index];
-    } while (!player?.getPlayer?.().joined || player?.getPlayer?.().folded);
-
-    return index;
-  }
 }
