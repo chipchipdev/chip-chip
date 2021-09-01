@@ -354,7 +354,7 @@ describe('Round Component', () => {
 
         channel.next({
           id: players[0].getPlayer().id,
-          type: PlayerActionEnum.CALL,
+          type: PlayerActionEnum.FOLD,
         });
 
         channel.next({

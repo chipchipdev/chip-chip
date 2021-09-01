@@ -1,5 +1,5 @@
 import {
-  HandStatus, PlayerActionEnum, RoundAbstract, RoundInteractive,
+  HandStatus, PlayerActionEnum, RoundAbstract, RoundInteractive, RoundStateEnum,
 } from '@chip-chip/schema';
 
 import {
@@ -17,21 +17,20 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { RoundStateEnum } from '@chip-chip/schema/lib/base';
 import { Pool } from './pool';
 import { Player } from './player';
 import { PlayerAction } from './action';
 
 export class Round<Hand>
-  extends RoundAbstract<
-  Pool<Hand, Round<Hand>>,
+  extends RoundAbstract<Pool<Hand, Round<Hand>>,
   Hand,
   Round<Hand>,
   Player,
   PlayerAction,
-  HandStatus<Player>
-  >
+  HandStatus<Player>>
   implements RoundInteractive<Round<Hand>, Player> {
+  is: RoundStateEnum;
+
   status: Subject<HandStatus<Player>> = new Subject();
 
   actionMap: { [id: string]: PlayerAction; } = {};
@@ -51,6 +50,7 @@ export class Round<Hand>
   => Observable<{ round: Round<Hand>; }> = (subscription) => {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onPlay: subscription });
     return this.onPlayObservable;
   };
 
@@ -59,6 +59,7 @@ export class Round<Hand>
   => Observable<{ round: Round<Hand>; }> = (subscription) => {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onEnd: subscription });
     return this.onEndObservable;
   };
 
@@ -66,6 +67,7 @@ export class Round<Hand>
   (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void)
   => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
     const disposable = this.onMonitorObservable.subscribe(subscription);
+    this.interactiveCollector.push({ onMonitor: subscription });
     this.disposableBag.add(disposable);
     return this.onMonitorObservable;
   };
@@ -75,18 +77,20 @@ export class Round<Hand>
   => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
     const disposable = this.onDealObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onDeal: subscription });
     return this.onDealObservable;
   };
 
   disposableBag: Subscription = new Subscription();
 
-  interactiveCollector: { [key: string]: any; }[];
+  interactiveCollector: { [key: string]: any; }[] = [];
 
   unsubscribe(): void {
-    // throw new Error('Method not implemented.');
+    this.disposableBag.unsubscribe();
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
+    this.is = round;
     this.pool.playRound();
 
     this.players.forEach((player) => {
@@ -98,8 +102,11 @@ export class Round<Hand>
     });
 
     if (round === RoundStateEnum.PRE_FLOP) {
-      const smallBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(this.position);
-      const bigBlindPosition = this.getNextPlayerIndexAfterSpecificIndex(smallBlindPosition);
+      const smallBlindPosition = Round
+        .getNextPlayerIndexAfterSpecificIndex(this.position, this.players);
+
+      const bigBlindPosition = Round
+        .getNextPlayerIndexAfterSpecificIndex(smallBlindPosition, this.players);
 
       this.deal(
         this.players[smallBlindPosition],
@@ -157,6 +164,7 @@ export class Round<Hand>
 
     this.status.subscribe(() => {
       this.pool.endRound();
+      this.status.complete();
     });
 
     queriedPlayers.connect();
@@ -172,9 +180,7 @@ export class Round<Hand>
    * it will triggered manually
    */
   end() {
-    this.status.next({
-      completed: false,
-    });
+    this.status.complete();
     this.onEndObservable.next({
       round: this,
     });
@@ -316,7 +322,7 @@ export class Round<Hand>
   private dealWithCalled(player: Player) {
     const remainingPlayers = this.players.filter((p) => {
       const { folded, allin, bet } = p.getPlayer();
-      return !folded && allin && !bet;
+      return !folded && !allin && !bet;
     });
 
     const hasAllPlayersCalled = remainingPlayers
@@ -350,13 +356,13 @@ export class Round<Hand>
     return playersOrdered;
   }
 
-  private getNextPlayerIndexAfterSpecificIndex(position: number) {
+  static getNextPlayerIndexAfterSpecificIndex(position: number, players: Player[]) {
     let player: Player;
     let index = position;
 
     do {
-      index = (index + 1) % this.players.length;
-      player = this.players[index];
+      index = (index + 1) % players.length;
+      player = players[index];
     } while (!player.getPlayer().joined || player.getPlayer().folded);
 
     return index;
@@ -379,7 +385,7 @@ export class Round<Hand>
       return actingPlayer === remainingPlayers[remainingPlayers.length - 1];
     }
 
-    const nextIndex = this.getNextPlayerIndexAfterSpecificIndex(currentIndex);
+    const nextIndex = Round.getNextPlayerIndexAfterSpecificIndex(currentIndex, remainingPlayers);
     const playerWithOption = remainingPlayers.find((player) => player.getPlayer().optioned);
 
     return playerWithOption

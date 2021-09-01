@@ -25,6 +25,11 @@ enum RoundStateEnum {
 abstract class RoundAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
   /**
+   * @description to define the current round
+   */
+  abstract is: RoundStateEnum;
+
+  /**
    * @description the hand status observable, will be updated after a round is ended
    */
   abstract status: Observable<HandStatus>;

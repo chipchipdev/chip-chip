@@ -57,7 +57,7 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    * @description when some other subscribe this property,
    * it will receive the match instance after a new round is starting
    */
-  onPlayObservable: Observable<{ hand: Hand, round: Round }>
+  onPlayObservable: Observable<{ hand: Hand, round: Round, is: RoundStateEnum }>
 
   /**
    * @description add subscriptions for onStartObservable
@@ -79,9 +79,9 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    * @description add subscriptions for onPlayObservable
    * @param subscription
    */
-  onPlay:(subscription: ({ hand, round }:
-  { hand: Hand, round: Round }) => void)
-  => Observable<{ hand: Hand, round: Round }>
+  onPlay:(subscription: ({ hand, round, is }:
+  { hand: Hand, round: Round, is: RoundStateEnum }) => void)
+  => Observable<{ hand: Hand, round: Round, is: RoundStateEnum }>
 }
 
 export {

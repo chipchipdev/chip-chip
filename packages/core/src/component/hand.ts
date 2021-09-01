@@ -1,8 +1,15 @@
 import {
-  HandAbstract, HandInteractive, RoundStateEnum, PlayerActionEnum,
+  HandAbstract,
+  HandInteractive,
+  RoundStateEnum,
 } from '@chip-chip/schema';
 import {
-  asyncScheduler, concatMap, from, mergeMap, Observable, scheduled, Subject, Subscription, takeUntil,
+  concatMap,
+  from,
+  Observable,
+  Subject,
+  Subscription,
+  takeUntil,
 } from 'rxjs';
 import { isFunction } from 'lodash';
 import { HandStatus } from '@chip-chip/schema/lib/base';
@@ -13,12 +20,21 @@ import { PlayerAction } from './action';
 
 export class Hand
   extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction>
-  implements HandInteractive<Hand, Round<PlayerAction>> {
-  onPlay: (subscription: ({ hand, round }:
-  { hand: Hand; round: Round<PlayerAction>; }) => void)
-  => Observable<{ hand: Hand; round: Round<PlayerAction>; }>;
-
+  implements HandInteractive<Hand, Round<Hand>> {
   playing: Subject<boolean> = new Subject();
+
+  round = {
+    interactiveCollector: [],
+    onDeal: (subscription) => this.round.interactiveCollector.push({ onDeal: subscription }),
+    onMonitor: (subscription) => this.round.interactiveCollector.push({ onMonitor: subscription }),
+    onPlay: (subscription) => this.round.interactiveCollector.push({ onPlay: subscription }),
+    onEnd: (subscription) => this.round.interactiveCollector.push({ onEnd: subscription }),
+    unsubscribe() {},
+  } as unknown as Round<Hand>;
+
+  getRound() {
+    return this.round;
+  }
 
   start(): Observable<boolean> {
     this.players.forEach((player) => {
@@ -52,12 +68,23 @@ export class Hand
           this.end();
         }
       });
+
+    this.onStartObservable.next({
+      hand: this,
+    });
+
     return this.playing;
   }
 
   end() {
+    if (!this.round?.status) {
+      this.round.status.complete();
+    }
+
     this.playing.next(false);
     this.playing.complete();
+
+    this.onEndObservable.next({ hand: this });
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
@@ -85,6 +112,12 @@ export class Hand
 
     this.round = nextRound;
 
+    this.onPlayObservable.next({
+      hand: this,
+      round: nextRound,
+      is: round,
+    });
+
     return this.round.play(round);
   }
 
@@ -93,26 +126,38 @@ export class Hand
   disposableBag: Subscription = new Subscription();
 
   unsubscribe(): void {
-    // throw new Error('Method not implemented.');
+    this.disposableBag.unsubscribe();
   }
 
-  onStartObservable: Subject<{ hand: Hand }>;
+  onStartObservable: Subject<{ hand: Hand }> = new Subject();
 
-  onEndObservable: Subject<{ hand: Hand }>;
+  onEndObservable: Subject<{ hand: Hand }> = new Subject();
 
-  onPlayObservable: Subject<{ hand: Hand; round: Round<PlayerAction> }>;
+  onPlayObservable: Subject<{ hand: Hand; round: Round<Hand>, is: RoundStateEnum }> = new Subject();
 
-  onEnd(subscription: ({ hand }:
-  { hand: Hand }) => void):
-    Observable<{ hand: Hand }> {
-    return undefined;
-  }
+  onStart:
+  (subscription: ({ hand }: { hand: Hand; }) => void)
+  => Observable<{ hand: Hand; }> = (subscription) => {
+    const disposable = this.onStartObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onStartObservable;
+  };
 
-  onStart(subscription: ({ hand }:
-  { hand: Hand }) => void):
-    Observable<{ hand: Hand }> {
-    return undefined;
-  }
+  onEnd:
+  (subscription: ({ hand }: { hand: Hand; }) => void)
+  => Observable<{ hand: Hand; }> = (subscription) => {
+    const disposable = this.onEndObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onEndObservable;
+  };
+
+  onPlay: (subscription: ({ hand, round, is }:
+  { hand: Hand; round: Round<Hand>; is: RoundStateEnum; }) => void)
+  => Observable<{ hand: Hand; round: Round<Hand>; is: RoundStateEnum; }> = (subscription) => {
+    const disposable = this.onPlayObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onPlayObservable;
+  };
 
   private getNextPlayerIndexAfterSpecificIndex(position: number) {
     let player: Player;
