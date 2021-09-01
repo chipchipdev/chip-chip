@@ -168,8 +168,13 @@ export class Round<Hand>
     return this.status;
   }
 
+  /**
+   * it will triggered manually
+   */
   end() {
-    // todo end
+    this.status.next({
+      completed: false,
+    });
     this.onEndObservable.next({
       round: this,
     });

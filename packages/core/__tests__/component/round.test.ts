@@ -41,18 +41,31 @@ const roundSetup = (position: number) => {
 };
 
 describe('Round Component', () => {
+  let initiator;
+
+  beforeEach(() => {
+    initiator = roundSetup(1);
+  });
+
+  afterEach(() => {
+    const { round } = initiator;
+    round.status.next({
+      completed: true,
+    });
+  });
+
   describe('pre flop round', () => {
     it(`should auto bet the small blinds
             and big blinds during the pre flop round`,
     () => {
-      const { round, players } = roundSetup(1);
+      const { round, players } = initiator;
       round.play(RoundStateEnum.PRE_FLOP);
       expect(players[2].getPlayer().chips).toBe(999);
       expect(players[0].getPlayer().chips).toBe(998);
     });
 
     it('should let the UTG have the ability to fold', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       let doneDuringMonitor = false;
       let doneDuringDeal = false;
@@ -83,7 +96,7 @@ describe('Round Component', () => {
     });
 
     it('should let the UTG have the ability to call', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       let doneDuringMonitor = false;
       let doneDuringDeal = false;
@@ -114,7 +127,7 @@ describe('Round Component', () => {
     });
 
     it('should let the UTG have the ability to raise', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       let doneDuringMonitor = false;
       let doneDuringDeal = false;
@@ -146,7 +159,7 @@ describe('Round Component', () => {
     });
 
     it('shouldn\'t let the UTG have the ability to bet', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       const handler = jest.fn();
 
@@ -174,7 +187,7 @@ describe('Round Component', () => {
     });
 
     it('shouldn\'t let the UTG have the ability to check', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       const handler = jest.fn();
 
@@ -204,7 +217,7 @@ describe('Round Component', () => {
     it(`should let big blind has one more opportunity to check
             and after he(she) checked, finish current round`,
     (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       round.status.subscribe(({ completed }) => {
         if (!completed) done();
@@ -233,7 +246,7 @@ describe('Round Component', () => {
     it(`should let big blind has one more opportunity to raise
             and after he(she) checked, finish current round`,
     (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       round.status.subscribe(({ completed }) => {
         if (!completed) {
@@ -275,7 +288,7 @@ describe('Round Component', () => {
     it(`should let big blind be the winner
             and after others folded`,
     (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       round.status.subscribe(({ completed }) => {
         if (completed) done();
@@ -299,7 +312,7 @@ describe('Round Component', () => {
 
   describe('other round', () => {
     it('should complete the hand when only one player left', (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       round.status.subscribe(({ completed }) => {
         if (completed) done();
@@ -324,7 +337,7 @@ describe('Round Component', () => {
     it(`should end the round but don't 
     complete the hand when only more than one players left`,
     (done) => {
-      const { round, channel, players } = roundSetup(1);
+      const { round, channel, players } = initiator;
 
       round.status.subscribe(({ completed }) => {
         if (!completed) done();
@@ -335,7 +348,7 @@ describe('Round Component', () => {
       setTimeout(() => {
         channel.next({
           id: players[2].getPlayer().id,
-          type: PlayerActionEnum.RAISE,
+          type: PlayerActionEnum.BET,
           amount: 10,
         });
 
@@ -347,6 +360,72 @@ describe('Round Component', () => {
         channel.next({
           id: players[1].getPlayer().id,
           type: PlayerActionEnum.CALL,
+        });
+      });
+    });
+  });
+
+  describe('all-in cases', () => {
+    it('should create a side-pot for each all-in player', (done) => {
+      const {
+        round, channel, players, pool,
+      } = initiator;
+
+      round.status.subscribe(({ completed }) => {
+        if (!completed && pool.allinPlayers.length === 2) {
+          done();
+        }
+      });
+
+      round.play(RoundStateEnum.FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.BET,
+          amount: 1000,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+      });
+    });
+
+    it('should create a pot for only one all-in player', (done) => {
+      const {
+        round, channel, players, pool,
+      } = initiator;
+
+      round.status.subscribe(({ completed }) => {
+        if (completed && pool.allinPlayers.length === 1) {
+          done();
+        }
+      });
+
+      round.play(RoundStateEnum.FLOP);
+
+      setTimeout(() => {
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.BET,
+          amount: 1000,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
         });
       });
     });
