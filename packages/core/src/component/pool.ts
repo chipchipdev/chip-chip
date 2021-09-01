@@ -89,9 +89,33 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
   }
 
   endHand(status: HandStatus<Player>) {
-    this.pot.status = status;
-    this.calculateOutcome(this.pot);
-    this.outcomes.push(status);
+    const { winners = [] } = status;
+
+    this.pots.forEach((pot) => {
+      if (pot.amount === 0) return;
+      const potWinners = [];
+
+      winners.forEach((potentialWinner) => {
+        if (
+          pot.participants
+            .find(
+              (p) => p.getPlayer().id
+                  === potentialWinner.getPlayer().id,
+            )
+        ) {
+          potWinners.push(potentialWinner);
+        }
+      });
+
+      // eslint-disable-next-line no-param-reassign
+      pot.status = {
+        completed: true,
+        winners: potWinners,
+      };
+
+      this.calculateOutcome(pot);
+      this.outcomes.push(pot.status);
+    });
 
     this.pots = [];
   }
