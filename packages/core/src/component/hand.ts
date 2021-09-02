@@ -96,6 +96,7 @@ export class Hand
 
   end() {
     this.status.complete();
+    this.status.unsubscribe();
 
     this.onEndObservable.next({ hand: this });
   }

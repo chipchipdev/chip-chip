@@ -41,10 +41,10 @@ describe('Hand Component', () => {
     initiator = handSetup(1);
   });
 
-  afterEach(() => {
-    const { hand } = initiator;
-    hand.end();
-  });
+  // afterEach(() => {
+  //   const { hand } = initiator;
+  //   hand.end();
+  // });
 
   it('should go to flop round that after pre-flop there is no winner decided', (done) => {
     const { hand, channel, players } = initiator;
@@ -544,14 +544,6 @@ describe('Hand Component', () => {
         });
       });
     });
-  });
-});
-
-describe('Hand Component All in case', () => {
-  let initiator;
-
-  beforeEach(() => {
-    initiator = handSetup(1);
   });
 
   it('should decide the winners with showdown(all-in contains)', (done) => {
