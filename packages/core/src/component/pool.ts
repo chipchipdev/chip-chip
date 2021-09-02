@@ -170,8 +170,8 @@ Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<P
     const { optioned, action: previousAction, chips } = player.getPlayer();
 
     const ifBetOrRaiseInActionMap = Object.keys(actionMap)
-      .filter((key) => actionMap[key].type === PlayerActionEnum.BET
-                    || actionMap[key].type === PlayerActionEnum.RAISE)
+      .filter((key) => actionMap[key]?.type === PlayerActionEnum.BET
+                    || actionMap[key]?.type === PlayerActionEnum.RAISE)
       .length > 0;
 
     // check if action name valid

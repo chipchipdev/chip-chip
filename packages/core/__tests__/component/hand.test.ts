@@ -337,4 +337,85 @@ describe('Hand Component', () => {
         });
       });
     });
+
+  it('should calculate the right answer that if there are many complex actions that could decide the winner(all-in contains)',
+    (done) => {
+      const { hand, channel, players } = initiator;
+
+      hand.onEnd(() => {
+        done();
+      });
+
+      hand.start();
+
+      setTimeout(() => {
+        // pre-flop
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 10,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 20,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.RAISE,
+          amount: 50,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        // flop
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.BET,
+          amount: 840,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.CALL,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+
+        // turn
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerActionEnum.BET,
+          amount: 110,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerActionEnum.FOLD,
+        });
+      });
+    });
 });

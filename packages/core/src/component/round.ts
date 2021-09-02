@@ -3,7 +3,6 @@ import {
 } from '@chip-chip/schema';
 
 import {
-  AsyncSubject,
   BehaviorSubject,
   concatMap,
   connectable,
@@ -146,6 +145,7 @@ export class Round<Hand>
 
     if (remainingPlayers.length < 2) {
       this.status.next({ completed: false });
+      status.next({ completed: false });
       return this.status;
     }
 

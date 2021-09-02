@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { PlayerActionEnum, RoundStateEnum } from '@chip-chip/schema/lib';
+import { HandStatus, PlayerActionEnum, RoundStateEnum } from '@chip-chip/schema/lib';
 import { Round } from '../../src/component/round';
 import { Player } from '../../src/component/player';
 import { PlayerAction } from '../../src/component/action';
@@ -59,7 +59,7 @@ describe('Round Component', () => {
             and big blinds during the pre flop round`,
     () => {
       const { round, players } = initiator;
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
       expect(players[2].getPlayer().chips).toBe(999);
       expect(players[0].getPlayer().chips).toBe(998);
     });
@@ -85,7 +85,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -116,7 +116,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -147,7 +147,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -176,7 +176,7 @@ describe('Round Component', () => {
         }, 3000);
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -204,7 +204,7 @@ describe('Round Component', () => {
         }, 3000);
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -223,7 +223,7 @@ describe('Round Component', () => {
         if (!completed) done();
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -254,7 +254,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -294,7 +294,7 @@ describe('Round Component', () => {
         if (completed) done();
       });
 
-      round.play(RoundStateEnum.PRE_FLOP);
+      round.play(RoundStateEnum.PRE_FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -318,7 +318,7 @@ describe('Round Component', () => {
         if (completed) done();
       });
 
-      round.play(RoundStateEnum.FLOP);
+      round.play(RoundStateEnum.FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -343,7 +343,7 @@ describe('Round Component', () => {
         if (!completed) done();
       });
 
-      round.play(RoundStateEnum.FLOP);
+      round.play(RoundStateEnum.FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -377,7 +377,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.FLOP);
+      round.play(RoundStateEnum.FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
@@ -409,7 +409,7 @@ describe('Round Component', () => {
         }
       });
 
-      round.play(RoundStateEnum.FLOP);
+      round.play(RoundStateEnum.FLOP, new Subject<HandStatus<Player>>());
 
       setTimeout(() => {
         channel.next({
