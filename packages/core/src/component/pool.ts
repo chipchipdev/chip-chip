@@ -146,6 +146,7 @@ Hand, Round, Player, PlayerAction | PlayerShowDownAction, Pot<Player, HandStatus
   update(player: Player, action: PlayerAction) {
     switch (action.type) {
       case PlayerActionEnum.FOLD:
+        // todo multiple splice
         this.pots.forEach((pot) => {
           pot.participants.splice(pot.participants.indexOf(player), 1);
         });

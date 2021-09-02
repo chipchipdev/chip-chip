@@ -41,11 +41,6 @@ describe('Hand Component', () => {
     initiator = handSetup(1);
   });
 
-  // afterEach(() => {
-  //   const { hand } = initiator;
-  //   hand.end();
-  // });
-
   it('should go to flop round that after pre-flop there is no winner decided', (done) => {
     const { hand, channel, players } = initiator;
 

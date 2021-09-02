@@ -138,7 +138,7 @@ class MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
  * and also define some abstract methods that need to be implement
  * @abstract
  */
-abstract class MatchAbstract<Pool, Hand, Round, Player, PlayerAction>
+abstract class MatchAbstract<Pool, Hand, Round, Player, PlayerAction, HandStatus>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
   abstract playing: Observable<boolean>;
 
@@ -162,7 +162,7 @@ abstract class MatchAbstract<Pool, Hand, Round, Player, PlayerAction>
   /**
    * @description play a new hand in current match
    */
-  abstract play(): Observable<boolean>;
+  abstract play(): Observable<HandStatus>;
 }
 
 interface MatchSharedInteractive {

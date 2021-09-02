@@ -22,7 +22,13 @@ import { PlayerAction, PlayerShowDownAction } from './action';
 import { Showdown } from './showdown';
 
 export class Hand
-  extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction | PlayerShowDownAction>
+  extends HandAbstract<
+  Pool<Hand, Round<Hand>>,
+  Hand,
+  Round<Hand>,
+  Player,
+  PlayerAction | PlayerShowDownAction
+  >
   implements HandInteractive<Hand, Round<Hand>> {
   status: BehaviorSubject<HandStatus<Player>> = new BehaviorSubject({
     winners: [],
@@ -72,6 +78,9 @@ export class Hand
           if (Object.values(RoundStateEnum).includes(round)) {
             return this.play(round as RoundStateEnum);
           }
+          this.onShowdownObservable.next({
+            hand: this,
+          });
           return new Showdown({
             players: this.players,
             channel: this.channel as Observable<PlayerShowDownAction>,
@@ -144,7 +153,7 @@ export class Hand
     this.disposableBag.unsubscribe();
   }
 
-  onShowdownObservable: Observable<{ hand: Hand; }> = new Subject();
+  onShowdownObservable: Subject<{ hand: Hand; }> = new Subject();
 
   onStartObservable: Subject<{ hand: Hand }> = new Subject();
 
@@ -157,6 +166,7 @@ export class Hand
   => Observable<{ hand: Hand; }> = (subscription) => {
     const disposable = this.onStartObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onStart: subscription });
     return this.onStartObservable;
   };
 
@@ -165,6 +175,7 @@ export class Hand
   => Observable<{ hand: Hand; }> = (subscription) => {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onEnd: subscription });
     return this.onEndObservable;
   };
 
@@ -173,6 +184,7 @@ export class Hand
   => Observable<{ hand: Hand; round: Round<Hand>; is: RoundStateEnum; }> = (subscription) => {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onPlay: subscription });
     return this.onPlayObservable;
   };
 
@@ -181,6 +193,7 @@ export class Hand
   => Observable<{ hand: Hand; }> = (subscription) => {
     const disposable = this.onShowdownObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
+    this.interactiveCollector.push({ onShowdown: subscription });
     return this.onEndObservable;
   };
 }
