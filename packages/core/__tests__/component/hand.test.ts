@@ -545,12 +545,19 @@ describe('Hand Component', () => {
       });
     });
   });
+});
+
+describe('Hand Component All in case', () => {
+  let initiator;
+
+  beforeEach(() => {
+    initiator = handSetup(1);
+  });
 
   it('should decide the winners with showdown(all-in contains)', (done) => {
     const { hand, channel, players } = initiator;
 
     hand.onEnd(() => {
-      console.log(players.map((p) => p.getPlayer().chips));
       done();
     });
 
@@ -612,38 +619,6 @@ describe('Hand Component', () => {
         id: players[1].getPlayer().id,
         type: PlayerActionEnum.CALL,
       });
-      //
-      // // turn
-      // channel.next({
-      //   id: players[2].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
-      //
-      // channel.next({
-      //   id: players[0].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
-      //
-      // channel.next({
-      //   id: players[1].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
-      //
-      // // river
-      // channel.next({
-      //   id: players[2].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
-      //
-      // channel.next({
-      //   id: players[0].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
-      //
-      // channel.next({
-      //   id: players[1].getPlayer().id,
-      //   type: PlayerActionEnum.CHECK,
-      // });
 
       setTimeout(() => {
         channel.next({

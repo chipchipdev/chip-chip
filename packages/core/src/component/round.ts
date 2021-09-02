@@ -143,39 +143,38 @@ export class Round<Hand>
       return !folded && !allin;
     });
 
-    if (remainingPlayers.length < 2) {
-      status.next({ completed: false });
-      this.end();
-      this.unsubscribe();
-      return status;
-    }
-
-    const queriedPlayers = connectable(
-      from(this.orderedPlayers)
-        .pipe(
-          filter(
-            (player: Player) => {
-              const { folded, allin } = player.getPlayer();
-              return !folded && !allin;
-            },
-          ),
-          concatMap((p) => this.monitor(p)),
-          repeat(),
-          takeUntil(this.status),
-        ),
-    );
-
     this.disposableBag.add(this.status.subscribe((s) => {
       this.pool.endRound();
       this.status.complete();
       status.next(s);
     }));
 
-    this.disposableBag.add(queriedPlayers.connect());
+    if (remainingPlayers.length >= 2) {
+      const queriedPlayers = connectable(
+        from(this.orderedPlayers)
+          .pipe(
+            filter(
+              (player: Player) => {
+                const { folded, allin } = player.getPlayer();
+                return !folded && !allin;
+              },
+            ),
+            concatMap((p) => this.monitor(p)),
+            repeat(),
+            takeUntil(this.status),
+          ),
+      );
 
-    this.onPlayObservable.next({
-      round: this,
-    });
+      this.disposableBag.add(queriedPlayers.connect());
+
+      this.onPlayObservable.next({
+        round: this,
+      });
+    } else {
+      this.status.next({
+        completed: false,
+      });
+    }
 
     return this.status;
   }
