@@ -3,6 +3,7 @@ import {
 } from '@chip-chip/schema';
 
 import {
+  AsyncSubject,
   BehaviorSubject,
   concatMap,
   connectable,
@@ -145,7 +146,7 @@ export class Round<Hand>
 
     if (remainingPlayers.length < 2) {
       this.status.next({ completed: false });
-      return undefined;
+      return this.status;
     }
 
     const queriedPlayers = connectable(
@@ -197,7 +198,7 @@ export class Round<Hand>
       const message = new Subject<PlayerAction>();
       const { id } = player.getPlayer();
 
-      this.disposableBag.add(this.channel.subscribe((action) => {
+      const channel = this.channel.subscribe((action) => {
         if (
           id === action.id
             && this.pool.validate(
@@ -205,8 +206,10 @@ export class Round<Hand>
             )
         ) {
           message.next(action);
+          message.unsubscribe();
+          channel.unsubscribe();
         }
-      }));
+      });
 
       const source = connectable(message);
 
@@ -307,8 +310,8 @@ export class Round<Hand>
     const hasAllPlayersChecked = remainingPlayers
       .filter((p) => {
         const { action } = p.getPlayer();
-        return action.type === PlayerActionEnum.CHECK
-      || action.type === PlayerActionEnum.CALL;
+        return action?.type === PlayerActionEnum.CHECK
+      || action?.type === PlayerActionEnum.CALL;
       })
       .length === remainingPlayers.length;
 
@@ -330,7 +333,7 @@ export class Round<Hand>
     const hasAllPlayersCalled = remainingPlayers
       .filter((p) => {
         const { action } = p.getPlayer();
-        return action.type === PlayerActionEnum.CALL;
+        return action?.type === PlayerActionEnum.CALL;
       })
       .length === remainingPlayers.length;
 
