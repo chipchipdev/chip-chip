@@ -14,13 +14,15 @@ import {
 } from 'rxjs';
 import { isFunction } from 'lodash';
 import { HandStatus } from '@chip-chip/schema/lib/base';
+import { ShowdownEnum } from '@chip-chip/schema/lib/base/showdown.abstract';
 import { Player } from './player';
 import { Pool } from './pool';
 import { Round } from './round';
-import { PlayerAction } from './action';
+import { PlayerAction, PlayerShowDownAction } from './action';
+import { Showdown } from './showdown';
 
 export class Hand
-  extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction>
+  extends HandAbstract<Pool<Hand, Round<Hand>>, Hand, Round<Hand>, Player, PlayerAction | PlayerShowDownAction>
   implements HandInteractive<Hand, Round<Hand>> {
   status: BehaviorSubject<HandStatus<Player>> = new BehaviorSubject({
     winners: [],
@@ -61,10 +63,20 @@ export class Hand
       RoundStateEnum.FLOP,
       RoundStateEnum.TURN,
       RoundStateEnum.RIVER,
+      // go to the showdown turn
+      ShowdownEnum.SHOWDOWN,
     ])
       .pipe(
         takeWhile(() => !this.status.getValue().completed),
-        concatMap((round) => this.play(round)),
+        concatMap((round) => {
+          if (Object.values(RoundStateEnum).includes(round)) {
+            return this.play(round as RoundStateEnum);
+          }
+          return new Showdown({
+            players: this.players,
+            channel: this.channel as Observable<PlayerShowDownAction>,
+          }).play(this.status);
+        }),
       )
       .subscribe();
 
@@ -83,7 +95,6 @@ export class Hand
   }
 
   end() {
-    // this.round?.status?.complete();
     this.status.complete();
 
     this.onEndObservable.next({ hand: this });
@@ -95,7 +106,7 @@ export class Hand
       position: this.position,
       pool: this.pool,
       wager: this.wager,
-      channel: this.channel,
+      channel: this.channel as Observable<PlayerAction>,
       chips: this.chips,
     });
 
@@ -110,7 +121,8 @@ export class Hand
       }
     });
 
-    this.round?.unsubscribe();
+    this.round?.unsubscribe?.();
+    this.round?.end?.();
 
     this.round = nextRound;
 
@@ -130,6 +142,8 @@ export class Hand
   unsubscribe(): void {
     this.disposableBag.unsubscribe();
   }
+
+  onShowdownObservable: Observable<{ hand: Hand; }> = new Subject();
 
   onStartObservable: Subject<{ hand: Hand }> = new Subject();
 
@@ -159,5 +173,13 @@ export class Hand
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onPlayObservable;
+  };
+
+  onShowdown:
+  (subscription: ({ hand }: { hand: Hand; }) => void)
+  => Observable<{ hand: Hand; }> = (subscription) => {
+    const disposable = this.onShowdownObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onEndObservable;
   };
 }

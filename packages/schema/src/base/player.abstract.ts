@@ -18,6 +18,12 @@ enum PlayerActionEnum {
   RAISE = 'RAISE',
 }
 
+enum PlayerShowDownActionEnum {
+  IN,
+  OUT,
+  END,
+}
+
 /**
  * @description the abstract class for player instance, do some initialize chores in constructor
  * and also define some abstract methods that need to be implement
@@ -241,4 +247,5 @@ export {
   PlayerInitiator,
   PlayerInteractive,
   PlayerActionEnum,
+  PlayerShowDownActionEnum,
 };

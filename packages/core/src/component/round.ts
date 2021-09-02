@@ -144,9 +144,10 @@ export class Round<Hand>
     });
 
     if (remainingPlayers.length < 2) {
-      this.status.next({ completed: false });
       status.next({ completed: false });
-      return this.status;
+      this.end();
+      this.unsubscribe();
+      return status;
     }
 
     const queriedPlayers = connectable(
@@ -336,6 +337,10 @@ export class Round<Hand>
         return action?.type === PlayerActionEnum.CALL;
       })
       .length === remainingPlayers.length;
+
+    if (player.getPlayer().chips === 0) {
+      player.setAllin(true);
+    }
 
     const hasAllPlayersActed = this.checkIfPlayerIsLastToAct(player);
     if (hasAllPlayersCalled && hasAllPlayersActed) {

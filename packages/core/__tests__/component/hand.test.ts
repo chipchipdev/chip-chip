@@ -1,8 +1,8 @@
 import { Subject } from 'rxjs';
-import { PlayerActionEnum, RoundStateEnum } from '@chip-chip/schema/lib';
+import { PlayerActionEnum, PlayerShowDownActionEnum, RoundStateEnum } from '@chip-chip/schema/lib';
 import { Hand } from '../../src/component/hand';
 import { Player } from '../../src/component/player';
-import { PlayerAction } from '../../src/component/action';
+import { PlayerAction, PlayerShowDownAction } from '../../src/component/action';
 import { Pool } from '../../src/component/pool';
 import { Round } from '../../src/component/round';
 
@@ -15,7 +15,7 @@ const handSetup = (position: number) => {
     new Player({ id: '3', chips, name: 'player3' }),
   ];
 
-  const channel = new Subject<PlayerAction>();
+  const channel = new Subject<PlayerAction | PlayerShowDownAction>();
   const pool = new Pool<Hand, Round<Hand>>({
     players, chips, channel, wager, position,
   });
@@ -418,4 +418,259 @@ describe('Hand Component', () => {
         });
       });
     });
+
+  it('should decide the winners with showdown', (done) => {
+    const { hand, channel, players } = initiator;
+
+    hand.onEnd(() => {
+      done();
+    });
+
+    hand.start();
+
+    setTimeout(() => {
+      // pre-flop
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 10,
+      });
+
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 20,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 50,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      // flop
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.BET,
+        amount: 840,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      // turn
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      // river
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CHECK,
+      });
+
+      setTimeout(() => {
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerShowDownActionEnum.OUT,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerShowDownActionEnum.END,
+        });
+      });
+    });
+  });
+
+  it('should decide the winners with showdown(all-in contains)', (done) => {
+    const { hand, channel, players } = initiator;
+
+    hand.onEnd(() => {
+      console.log(players.map((p) => p.getPlayer().chips));
+      done();
+    });
+
+    hand.start();
+
+    setTimeout(() => {
+      // pre-flop
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 10,
+      });
+
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 20,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.RAISE,
+        amount: 50,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      // flop
+      channel.next({
+        id: players[2].getPlayer().id,
+        type: PlayerActionEnum.BET,
+        amount: 950,
+      });
+
+      channel.next({
+        id: players[0].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+
+      channel.next({
+        id: players[1].getPlayer().id,
+        type: PlayerActionEnum.CALL,
+      });
+      //
+      // // turn
+      // channel.next({
+      //   id: players[2].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+      //
+      // channel.next({
+      //   id: players[0].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+      //
+      // channel.next({
+      //   id: players[1].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+      //
+      // // river
+      // channel.next({
+      //   id: players[2].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+      //
+      // channel.next({
+      //   id: players[0].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+      //
+      // channel.next({
+      //   id: players[1].getPlayer().id,
+      //   type: PlayerActionEnum.CHECK,
+      // });
+
+      setTimeout(() => {
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[1].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerShowDownActionEnum.IN,
+        });
+
+        channel.next({
+          id: players[2].getPlayer().id,
+          type: PlayerShowDownActionEnum.OUT,
+        });
+
+        channel.next({
+          id: players[0].getPlayer().id,
+          type: PlayerShowDownActionEnum.END,
+        });
+      });
+    });
+  });
 });

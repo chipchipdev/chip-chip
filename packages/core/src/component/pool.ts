@@ -2,12 +2,12 @@ import { HandStatus, PoolAbstract, PlayerActionEnum } from '@chip-chip/schema';
 
 import _ from 'lodash';
 import { Player } from './player';
-import { PlayerAction } from './action';
+import { PlayerAction, PlayerShowDownAction } from './action';
 import { Pot } from './pot';
 
 export class Pool<Hand, Round> extends PoolAbstract<
 Pool<Hand, Round>,
-Hand, Round, Player, PlayerAction, Pot<Player, HandStatus<Player>>, HandStatus<Player>
+Hand, Round, Player, PlayerAction | PlayerShowDownAction, Pot<Player, HandStatus<Player>>, HandStatus<Player>
 > {
   allinPlayers: Player[] = [];
 

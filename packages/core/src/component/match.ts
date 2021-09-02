@@ -21,8 +21,13 @@ import { Pool } from './pool';
 import { PlayerAction } from './action';
 
 export class Match
-  extends MatchAbstract<Pool<Hand, Round<Hand>>, Hand,
-  Round<PlayerAction>, Player, PlayerAction>
+  extends MatchAbstract<
+  Pool<Hand, Round<Hand>>,
+  Hand,
+  Round<PlayerAction>,
+  Player,
+  PlayerAction
+  >
   implements MatchInteractive<Match, Hand> {
   playing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
