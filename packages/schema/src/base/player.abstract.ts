@@ -10,6 +10,15 @@ type PlayerInitiator = {
   chips: number
 };
 
+enum CroupierActionEnum {
+  ARRANGE = 'ARRANGE',
+  REORDER = 'REORDER',
+  START = 'START',
+  RESTART = 'RESTART',
+  PAUSE = 'PAUSE',
+  END = 'END',
+}
+
 enum PlayerActionEnum {
   FOLD = 'FOLD',
   CHECK = 'CHECK',
@@ -19,9 +28,9 @@ enum PlayerActionEnum {
 }
 
 enum PlayerShowDownActionEnum {
-  IN,
-  OUT,
-  END,
+  IN = 'IN',
+  OUT = 'OUT',
+  END = 'END',
 }
 
 /**
@@ -246,6 +255,7 @@ export {
   PlayerAbstract,
   PlayerInitiator,
   PlayerInteractive,
+  CroupierActionEnum,
   PlayerActionEnum,
   PlayerShowDownActionEnum,
 };

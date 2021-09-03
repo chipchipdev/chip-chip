@@ -7,7 +7,10 @@ import { Pot } from './pot';
 
 export class Pool<Hand, Round> extends PoolAbstract<
 Pool<Hand, Round>,
-Hand, Round, Player, PlayerAction | PlayerShowDownAction, Pot<Player, HandStatus<Player>>, HandStatus<Player>
+Hand,
+Round, Player,
+PlayerAction | PlayerShowDownAction,
+Pot<Player, HandStatus<Player>>, HandStatus<Player>
 > {
   allinPlayers: Player[] = [];
 

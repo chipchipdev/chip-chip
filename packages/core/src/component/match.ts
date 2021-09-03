@@ -1,8 +1,7 @@
 import { MatchAbstract, MatchInteractive, HandStatus } from '@chip-chip/schema';
 import {
-  asapScheduler, asyncScheduler,
+  asyncScheduler,
   BehaviorSubject, concatMap,
-  mergeMap,
   Observable,
   of,
   repeat,
@@ -36,10 +35,14 @@ export class Match
     interactiveCollector: [],
     round: {
       interactiveCollector: [],
-      onDeal: (subscription) => this.hand.round.interactiveCollector.push({ onDeal: subscription }),
-      onMonitor: (subscription) => this.hand.round.interactiveCollector.push({ onMonitor: subscription }),
-      onPlay: (subscription) => this.hand.round.interactiveCollector.push({ onPlay: subscription }),
-      onEnd: (subscription) => this.hand.round.interactiveCollector.push({ onEnd: subscription }),
+      onDeal:
+          (subscription) => this.hand.round.interactiveCollector.push({ onDeal: subscription }),
+      onMonitor:
+          (subscription) => this.hand.round.interactiveCollector.push({ onMonitor: subscription }),
+      onPlay:
+          (subscription) => this.hand.round.interactiveCollector.push({ onPlay: subscription }),
+      onEnd:
+          (subscription) => this.hand.round.interactiveCollector.push({ onEnd: subscription }),
       unsubscribe() {},
     },
     onStart: (subscription) => this.hand.interactiveCollector.push({ onStart: subscription }),

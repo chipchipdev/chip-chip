@@ -7,9 +7,11 @@ type Identifier = {
 /**
  * @description the initiator for create a croupier instance
  */
-type CroupierInitiator<PlayerUnscheduled extends Identifier> = {
+type CroupierInitiator<PlayerUnscheduled extends Identifier, Action> = {
   id: string;
   player: PlayerUnscheduled
+  chips: number
+  channel: Observable<Action>
 };
 
 /**
@@ -38,14 +40,23 @@ enum CroupierScheduledStage {
  * @description the croupier abstract class that
  * @abstract
  */
-abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
-  constructor(initiator: CroupierInitiator<PlayerUnscheduled>) {
-    const { id, player } = initiator;
+abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match, Action> {
+  constructor(initiator: CroupierInitiator<PlayerUnscheduled, Action>) {
+    const {
+      id, player, chips, channel,
+    } = initiator;
     this.id = id;
     this.owner = player;
     this.players.push(player);
     this.stage = CroupierScheduledStage.PREPARING;
+    this.chips = chips;
+    this.channel = channel;
   }
+
+  /**
+   * @description message channel
+   */
+  protected channel: Observable<Action>;
 
   /**
    * @description croupier id ( or like a room-id property )
@@ -78,10 +89,16 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
   protected match: Match;
 
   /**
+   * @description the initial chips for current match
+   * @protected
+   */
+  protected chips: number;
+
+  /**
    * @description the getter for croupier
    * @abstract
    */
-  abstract getCroupier(): {
+  protected abstract getCroupier(): {
     id: string; owner: PlayerUnscheduled; stage: CroupierScheduledStage;
     players: PlayerUnscheduled[], match?: Match
   };
@@ -91,7 +108,7 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
    * @param player
    * @abstract
    */
-  abstract arrange(player: PlayerUnscheduled);
+  protected abstract arrange(player: PlayerUnscheduled);
 
   /**
    * @description re-order the player position
@@ -99,30 +116,30 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match> {
    * @param index
    * @abstract
    */
-  abstract reorder(player: PlayerUnscheduled, index: number);
+  protected abstract reorder(player: PlayerUnscheduled, index: number);
 
   /**
    * @description start a new match
    * @abstract
    */
-  abstract start();
+  protected abstract start(wager: number);
 
   /**
    * @description restart the match, which will create a new match basing on previous match's result
    * @abstract
    */
-  abstract restart();
+  protected abstract restart(wager: number);
 
   /**
    * @description pause current match
    * @abstract
    */
-  abstract pause();
+  protected abstract pause();
 
   /**
    * @description end all the game
    */
-  abstract end();
+  protected abstract end();
 }
 
 /**
@@ -132,7 +149,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
   /**
    * @description disposable bag
    */
-  disposableBag: Subscription[];
+  disposableBag: Subscription;
   /**
    * @description clear the disposable bag
    */

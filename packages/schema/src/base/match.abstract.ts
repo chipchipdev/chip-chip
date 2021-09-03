@@ -81,7 +81,7 @@ class MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
     if (hand) this.hand = hand;
     if (round) this.round = round;
     if (pool) this.pool = pool;
-    if (position) this.position = position;
+    if (typeof position === 'number' && position >= 0) this.position = position;
   }
 
   /**
