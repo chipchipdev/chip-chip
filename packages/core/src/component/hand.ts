@@ -44,11 +44,11 @@ export class Hand
     unsubscribe() {},
   } as unknown as Round<Hand>;
 
-  getRound() {
-    return this.round;
-  }
-
   start(): Observable<HandStatus<Player>> {
+    this.onStartObservable.next({
+      hand: this,
+    });
+
     this.players.forEach((player) => {
       const { chips } = player.getPlayer();
       player.setJoined(chips > 0);
@@ -64,7 +64,7 @@ export class Hand
 
     this.pool.createPot(participants, 0);
 
-    from([
+    const rounds = from([
       RoundStateEnum.PRE_FLOP,
       RoundStateEnum.FLOP,
       RoundStateEnum.TURN,
@@ -81,6 +81,8 @@ export class Hand
           this.onShowdownObservable.next({
             hand: this,
           });
+          this.round?.unsubscribe();
+          this.round?.end();
           return new Showdown({
             players: this.players,
             channel: this.channel as Observable<PlayerShowDownAction>,
@@ -89,25 +91,23 @@ export class Hand
       )
       .subscribe();
 
-    this.status.subscribe((status) => {
+    this.disposableBag.add(rounds);
+
+    this.disposableBag.add(this.status.subscribe((status) => {
       if (status.completed) {
         this.pool.endHand(status);
         this.end();
       }
-    });
-
-    this.onStartObservable.next({
-      hand: this,
-    });
+    }));
 
     return this.status;
   }
 
   end() {
+    this.onEndObservable.next({ hand: this });
     this.status.complete();
     this.status.unsubscribe();
-
-    this.onEndObservable.next({ hand: this });
+    // this.unsubscribe();
   }
 
   play(round: RoundStateEnum): Observable<HandStatus<Player>> {
@@ -142,7 +142,7 @@ export class Hand
       is: round,
     });
 
-    return this.round.play(round, this.status);
+    return this.round.play.call(this.round, round, this.status);
   }
 
   interactiveCollector: { [key: string]: any; }[] = [];

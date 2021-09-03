@@ -16,13 +16,13 @@ export class Showdown
   play(status: Subject<HandStatus<Player>>): Subject<HandStatus<Player>> {
     this.onPlayObservable.next();
 
-    this.channel.subscribe((action) => {
+    this.disposableBag.add(this.channel.subscribe((action) => {
       if (
         this.validate(action)
       ) {
         this.deal(action, status);
       }
-    });
+    }));
 
     return status;
   }
@@ -56,6 +56,7 @@ export class Showdown
     this.onEndObservable.next({
       players: this.winners,
     });
+    this.disposableBag.unsubscribe();
   }
 
   onPlayObservable: Subject<void> = new Subject();

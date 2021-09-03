@@ -1,7 +1,7 @@
 import { MatchAbstract, MatchInteractive, HandStatus } from '@chip-chip/schema';
 import {
-  asapScheduler,
-  BehaviorSubject,
+  asapScheduler, asyncScheduler,
+  BehaviorSubject, concatMap,
   mergeMap,
   Observable,
   of,
@@ -34,20 +34,28 @@ export class Match
 
   hand = {
     interactiveCollector: [],
-    onStart: (subscription) => this.hand.interactiveCollector.push({ onDeal: subscription }),
-    onMonitor: (subscription) => this.hand.interactiveCollector.push({ onMonitor: subscription }),
+    round: {
+      interactiveCollector: [],
+      onDeal: (subscription) => this.hand.round.interactiveCollector.push({ onDeal: subscription }),
+      onMonitor: (subscription) => this.hand.round.interactiveCollector.push({ onMonitor: subscription }),
+      onPlay: (subscription) => this.hand.round.interactiveCollector.push({ onPlay: subscription }),
+      onEnd: (subscription) => this.hand.round.interactiveCollector.push({ onEnd: subscription }),
+      unsubscribe() {},
+    },
+    onStart: (subscription) => this.hand.interactiveCollector.push({ onStart: subscription }),
     onPlay: (subscription) => this.hand.interactiveCollector.push({ onPlay: subscription }),
     onEnd: (subscription) => this.hand.interactiveCollector.push({ onEnd: subscription }),
+    onShowdown: (subscription) => this.hand.interactiveCollector.push({ onShowdown: subscription }),
     unsubscribe() {},
   } as unknown as Hand;
 
   start(position?: number) {
     this.position = (position ?? this.position) ?? Math.floor(Math.random() * this.players.length);
 
-    const match = scheduled(of(true), asapScheduler)
+    const match = scheduled(of(true), asyncScheduler)
       .pipe(
         takeWhile(() => this.playing.value === true),
-        mergeMap(() => this.play()),
+        concatMap(() => this.play()),
         repeat(),
       )
       .subscribe();
@@ -83,6 +91,8 @@ export class Match
       channel: this.channel,
       chips: this.chips,
     });
+
+    nextHand.round = this.hand.round;
 
     const previousInteractiveCollector = this.hand?.interactiveCollector?.length > 0
       ? this.hand.interactiveCollector

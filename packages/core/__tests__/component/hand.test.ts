@@ -74,7 +74,7 @@ describe('Hand Component', () => {
     (done) => {
       const { hand, channel, players } = initiator;
 
-      const round = hand.getRound();
+      const { round } = hand;
 
       round?.onPlay(({ round: r }) => {
         if (

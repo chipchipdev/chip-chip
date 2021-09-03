@@ -96,7 +96,7 @@ describe('Match Component', () => {
         id: players[2].getPlayer().id,
         type: PlayerActionEnum.FOLD,
       });
-    });
+    }, 1000);
 
     // hand 2
     setTimeout(() => {
@@ -148,6 +148,6 @@ describe('Match Component', () => {
         id: players[0].getPlayer().id,
         type: PlayerActionEnum.FOLD,
       });
-    }, 1000);
+    }, 2000);
   });
 });
