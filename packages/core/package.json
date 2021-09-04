@@ -20,7 +20,6 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@chip-chip/schema": "^0.0.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.3.0",
     "ts-transformer-keys": "^0.4.3"
