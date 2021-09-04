@@ -1,6 +1,6 @@
 {
   "name": "@chip-chip/core",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.2",
   "description": "> TODO: description",
   "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
   "homepage": "",
@@ -20,7 +20,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@chip-chip/schema": "^0.0.1-alpha.4",
+    "@chip-chip/schema": "^0.0.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.3.0",
     "ts-transformer-keys": "^0.4.3"
