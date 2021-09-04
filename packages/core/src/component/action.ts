@@ -1,5 +1,4 @@
-import { PlayerActionEnum, PlayerShowDownActionEnum } from '@chip-chip/schema/lib';
-import { CroupierActionEnum } from '@chip-chip/schema/lib/base';
+import { PlayerActionEnum, PlayerShowDownActionEnum, CroupierActionEnum } from '../base';
 
 export type CroupierAction<PlayerUnscheduled> = {
   id: string

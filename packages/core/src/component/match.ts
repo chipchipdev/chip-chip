@@ -1,4 +1,3 @@
-import { MatchAbstract, MatchInteractive, HandStatus } from '@chip-chip/schema';
 import {
   asyncScheduler,
   BehaviorSubject, concatMap,
@@ -12,6 +11,7 @@ import {
 } from 'rxjs';
 
 import { isFunction } from 'lodash';
+import { MatchAbstract, MatchInteractive, HandStatus } from '../base';
 import { Player } from './player';
 
 import { Hand } from './hand';

@@ -1,5 +1,5 @@
 import casual from 'casual';
-import { CroupierActionEnum, PlayerActionEnum } from '@chip-chip/schema/lib';
+import { CroupierActionEnum, PlayerActionEnum } from '../../src/base';
 import { Channel, Croupier } from '../../src';
 
 describe('Croupier Component', () => {

@@ -1,6 +1,12 @@
 {
   "name": "root",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/core/*",
+      "packages/schema/*"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "jest": "^27.0.6",

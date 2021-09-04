@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { HandStatus, PlayerActionEnum, RoundStateEnum } from '@chip-chip/schema/lib';
+import { HandStatus, PlayerActionEnum, RoundStateEnum } from '../../src/base';
 import { Round } from '../../src/component/round';
 import { Player } from '../../src/component/player';
 import { PlayerAction } from '../../src/component/action';

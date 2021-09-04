@@ -2,8 +2,8 @@
 const path = require('path');
 
 /* webpack plugins */
-const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+// const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /**
  * @description webpack build config ( for typescript )
@@ -25,9 +25,6 @@ const config = {
         use: [
           {
             loader: 'ts-loader',
-            options: {
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-            },
           },
         ],
         exclude: /node_modules/,
@@ -37,9 +34,9 @@ const config = {
   resolve: {
     extensions: ['.ts', '.js'],
     plugins: [
-      new TsConfigPathsPlugin({
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
-      }),
+      // new TsConfigPathsPlugin({
+      //   configFile: path.resolve(__dirname, 'tsconfig.json'),
+      // }),
     ],
   },
   // webpack4 optimizations
@@ -54,11 +51,11 @@ const config = {
   },
   // fork tsconfig.json
   plugins: [
-    new ForkTsCheckerWebpackPlugin({
-      typescript: {
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
-      },
-    }),
+    // new ForkTsCheckerWebpackPlugin({
+    //   typescript: {
+    //     configFile: path.resolve(__dirname, 'tsconfig.json'),
+    //   },
+    // }),
     // new PeerDepsExternalsPlugin(),
   ],
 };

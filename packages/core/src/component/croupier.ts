@@ -1,11 +1,11 @@
 import {
-  CroupierAbstract, CroupierInteractive, CroupierScheduledStage, CroupierActionEnum,
-  CroupierInitiator,
-} from '@chip-chip/schema';
-import {
   Observable, Subject, Subscription,
 } from 'rxjs';
 import { isFunction } from 'lodash';
+import {
+  CroupierAbstract, CroupierInteractive, CroupierScheduledStage, CroupierActionEnum,
+  CroupierInitiator,
+} from '../base';
 import { Match } from './match';
 import { Player } from './player';
 import { Pool } from './pool';

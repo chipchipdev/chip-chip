@@ -1,8 +1,9 @@
-import { ShowdownAbstract, ShowdownInteractive } from '@chip-chip/schema/lib/base/showdown.abstract';
-import { HandStatus, PlayerShowDownActionEnum } from '@chip-chip/schema/lib';
 import {
   Observable, Subject, Subscription,
 } from 'rxjs';
+import {
+  ShowdownAbstract, ShowdownInteractive, HandStatus, PlayerShowDownActionEnum,
+} from '../base';
 import { Player } from './player';
 import { PlayerShowDownAction } from './action';
 

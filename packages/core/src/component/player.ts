@@ -1,9 +1,9 @@
+import { Observable, Subject, Subscription } from 'rxjs';
 import {
   PlayerAbstract,
   PlayerInitiator,
   PlayerInteractive,
-} from '@chip-chip/schema';
-import { Observable, Subject, Subscription } from 'rxjs';
+} from '../base';
 import { PlayerAction } from './action';
 
 class Player extends PlayerAbstract<PlayerAction>

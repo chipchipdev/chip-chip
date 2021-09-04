@@ -1,9 +1,4 @@
 import {
-  HandAbstract,
-  HandInteractive,
-  RoundStateEnum,
-} from '@chip-chip/schema';
-import {
   BehaviorSubject,
   concatMap,
   from,
@@ -13,8 +8,12 @@ import {
   takeWhile,
 } from 'rxjs';
 import { isFunction } from 'lodash';
-import { HandStatus } from '@chip-chip/schema/lib/base';
-import { ShowdownEnum } from '@chip-chip/schema/lib/base/showdown.abstract';
+import {
+  HandAbstract,
+  HandInteractive,
+  RoundStateEnum,
+  HandStatus, ShowdownEnum,
+} from '../base';
 import { Player } from './player';
 import { Pool } from './pool';
 import { Round } from './round';

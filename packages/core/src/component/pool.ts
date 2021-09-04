@@ -1,6 +1,8 @@
-import { HandStatus, PoolAbstract, PlayerActionEnum } from '@chip-chip/schema';
+import {
+  uniq, last, each, without,
+} from 'lodash';
+import { HandStatus, PoolAbstract, PlayerActionEnum } from '../base';
 
-import _ from 'lodash';
 import { Player } from './player';
 import { PlayerAction, PlayerShowDownAction } from './action';
 import { Pot } from './pot';
@@ -42,8 +44,8 @@ Pot<Player, HandStatus<Player>>, HandStatus<Player>
     const { status } = pot;
 
     if (status.winners.length > 1) {
-      _.each(status.winners, (winner) => {
-        if (_.last(status.winners) !== winner) {
+      each(status.winners, (winner) => {
+        if (last(status.winners) !== winner) {
           const { chips } = winner.getPlayer();
           winner.setChips(chips + Math.floor(pot.amount / status.winners.length));
         } else {
@@ -77,7 +79,7 @@ Pot<Player, HandStatus<Player>>, HandStatus<Player>
     const nextHighestWager = this.getNextHighestWagerFromAllInPlayers(wager);
 
     // We then remove this player from the side pot.
-    const sidePotParticipants = _.without(this.pot.participants, player);
+    const sidePotParticipants = without(this.pot.participants, player);
     let sidePotAmount = 0;
 
     // The amount we place in the side pot is the difference in wagers,
@@ -231,7 +233,7 @@ Pot<Player, HandStatus<Player>>, HandStatus<Player>
       .map((p) => p.getPlayer().action.amount)
       .sort((a, b) => a - b);
     wagers.push(this.bet);
-    wagers = _.uniq(wagers);
+    wagers = uniq(wagers);
 
     const nextIndex = wagers.indexOf(wager) + 1;
     return wagers[nextIndex] || wagers[wagers.length - 1];

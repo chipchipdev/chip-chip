@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 
 import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
 import { RoundStateEnum } from './round.abstract';
-import { Player } from '../../../core/src/component/player';
 
 /**
  * @description hand initiator inherit from the match shared initiator

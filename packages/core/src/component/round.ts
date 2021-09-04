@@ -1,8 +1,4 @@
 import {
-  HandStatus, PlayerActionEnum, RoundAbstract, RoundInteractive, RoundStateEnum,
-} from '@chip-chip/schema';
-
-import {
   BehaviorSubject,
   concatMap,
   connectable,
@@ -17,6 +13,10 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
+import {
+  HandStatus, PlayerActionEnum, RoundAbstract, RoundInteractive, RoundStateEnum,
+} from '../base';
+
 import { Pool } from './pool';
 import { Player } from './player';
 import { PlayerAction } from './action';

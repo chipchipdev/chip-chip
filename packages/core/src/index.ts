@@ -1,7 +1,2 @@
-import { Croupier } from './component/croupier';
-import { Channel } from './component/channel';
-
-export {
-  Croupier,
-  Channel,
-};
+export * from './component/croupier';
+export * from './component/channel';

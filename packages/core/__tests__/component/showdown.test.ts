@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { PlayerShowDownActionEnum } from '@chip-chip/schema/lib';
+import { PlayerShowDownActionEnum } from '../../src/base';
 import { Player } from '../../src/component/player';
 import { PlayerShowDownAction } from '../../src/component/action';
 import { Showdown } from '../../src/component/showdown';
