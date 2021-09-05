@@ -1,0 +1,30 @@
+{
+  "name": "@chip-chip/react-library",
+  "version": "0.0.4",
+  "description": "> TODO: description",
+  "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
+  "homepage": "https://github.com/chipchipdev/chip-chip#readme",
+  "license": "ISC",
+  "main": "lib/react-library.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chipchipdev/chip-chip.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/chipchipdev/chip-chip/issues"
+  },
+  "dependencies": {
+    "@chip-chip/core": "^0.0.4",
+    "react": "^17.0.2"
+  }
+}
