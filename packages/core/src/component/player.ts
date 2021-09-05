@@ -1,6 +1,6 @@
 import { Observable, Subject, Subscription } from 'rxjs';
 import {
-  PlayerAbstract,
+  PlayerAbstract, PlayerActionEnum,
   PlayerInitiator,
   PlayerInteractive,
 } from '../base';
@@ -22,6 +22,7 @@ class Player extends PlayerAbstract<PlayerAction>
     optioned?: boolean;
     bet?: boolean;
     action?: PlayerAction;
+    validActions: PlayerActionEnum[]
   } {
     return {
       id: this.id,
@@ -33,6 +34,7 @@ class Player extends PlayerAbstract<PlayerAction>
       bet: this.bet,
       optioned: this.optioned,
       action: this.action,
+      validActions: this.validActions,
     };
   }
 
@@ -92,6 +94,14 @@ class Player extends PlayerAbstract<PlayerAction>
     });
   }
 
+  setValidActions(actions: PlayerActionEnum[]) {
+    this.validActions = actions;
+    this.onValidActionsChangeObservable.next({
+      actions,
+      player: this,
+    });
+  }
+
   disposableBag: Subscription = new Subscription();
 
   interactiveCollector: { [key: string]: any }[];
@@ -129,6 +139,11 @@ class Player extends PlayerAbstract<PlayerAction>
 
   onActionChangeObservable: Subject<{
     action: PlayerAction;
+    player: Player;
+  }> = new Subject();
+
+  onValidActionsChangeObservable: Subject<{
+    actions: PlayerActionEnum[];
     player: Player;
   }> = new Subject();
 
@@ -198,6 +213,20 @@ class Player extends PlayerAbstract<PlayerAction>
     const disposable = this.onActionChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     return this.onActionChangeObservable;
+  };
+
+  onValidActionsChange: (
+    subscription: ({
+      actions,
+      player,
+    }: {
+      actions: PlayerActionEnum[];
+      player: Player;
+    }) => void
+  ) => Observable<{ actions: PlayerActionEnum[]; player: Player }> = (subscription) => {
+    const disposable = this.onValidActionsChangeObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onValidActionsChangeObservable;
   };
 }
 

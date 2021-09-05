@@ -1,6 +1,7 @@
 import * as casual from 'casual';
 import { Player } from '../../src/component/player';
 import { PlayerAction } from '../../src/component/action';
+import { PlayerActionEnum } from '../../src/base';
 
 const setupFakePlayer = () => {
   const fakeUuid = casual.uuid;
@@ -148,5 +149,22 @@ describe('Player Component', () => {
     fakePlayer.setAction(fakeAction);
     const { action } = fakePlayer.getPlayer();
     expect(action).toBe(fakeAction);
+  });
+
+  it(`should set the player valid actions synchronously by setAction func,
+      and if someone subscribe the onValidActionsChange event,
+      someone will receive the changes as well`, (done) => {
+    const fakePlayer = setupFakePlayer();
+    const fakeActions = [PlayerActionEnum.CHECK, PlayerActionEnum.CALL];
+
+    fakePlayer.onValidActionsChange(({ actions, player }) => {
+      expect(player.getPlayer().validActions).toBe(fakeActions);
+      expect(actions).toBe(fakeActions);
+      done();
+    });
+
+    fakePlayer.setValidActions(fakeActions);
+    const { validActions } = fakePlayer.getPlayer();
+    expect(validActions).toBe(fakeActions);
   });
 });

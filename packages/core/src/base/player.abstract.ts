@@ -44,6 +44,7 @@ abstract class PlayerAbstract<PlayerAction> {
     this.id = id;
     this.name = name;
     this.chips = chips;
+    this.validActions = [];
   }
 
   /**
@@ -101,6 +102,8 @@ abstract class PlayerAbstract<PlayerAction> {
      */
   protected action?: PlayerAction;
 
+  protected validActions: PlayerActionEnum[];
+
   /**
    * @description the getter for player
    * @abstract
@@ -108,7 +111,7 @@ abstract class PlayerAbstract<PlayerAction> {
   abstract getPlayer(): {
     id: string, name: string, chips: number,
     joined?: boolean; folded?: boolean; allin?: boolean; optioned?: boolean; bet?: boolean;
-    action?: PlayerAction
+    action?: PlayerAction; validActions: PlayerActionEnum[]
   };
 
   /**
@@ -152,6 +155,8 @@ abstract class PlayerAbstract<PlayerAction> {
    * @abstract
    */
   abstract setAction(action: PlayerAction);
+
+  abstract setValidActions(actions: PlayerActionEnum[]);
 }
 
 /**
@@ -194,6 +199,11 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    * it will receive the new player state after action changes
    */
   onActionChangeObservable: Observable<{ action: PlayerAction, player: Player }>;
+  /**
+   * @description when some other subscribe this property,
+   * it will receive the new player state after valid actions changes
+   */
+  onValidActionsChangeObservable: Observable<{ actions: PlayerActionEnum[], player: Player }>;
 
   /**
    * @description add subscriptions for onChipsChangeObservable
@@ -249,6 +259,14 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
   onActionChange: (subscription: ({ action, player }:
   { action: PlayerAction, player: Player }) => void)
   =>Observable<{ action: PlayerAction, player: Player }>;
+
+  /**
+   * @description add subscriptions for onValidActionsChangeObservable
+   * @param subscription
+   */
+  onValidActionsChange: (subscription: ({ actions, player }:
+  { actions: PlayerActionEnum[], player: Player }) => void)
+  =>Observable<{ actions: PlayerActionEnum[], player: Player }>;
 }
 
 export {
