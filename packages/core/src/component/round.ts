@@ -190,6 +190,12 @@ export class Round<Hand>
   }
 
   monitor(player: Player) {
+    this.players.forEach((p) => {
+      p.setValidActions([]);
+    });
+
+    player.setValidActions(Pool.getValidActions(player, this.actionMap));
+
     return defer(() => {
       this.onMonitorObservable.next({
         player,
@@ -223,6 +229,9 @@ export class Round<Hand>
   }
 
   deal(player: Player, action: PlayerAction, blinded: boolean) {
+    this.players.forEach((p) => {
+      p.setValidActions([]);
+    });
     this.pool.update(player, action);
     player.setAction(action);
     this.actionMap[player.getPlayer().id] = action;

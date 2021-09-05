@@ -228,6 +228,37 @@ Pot<Player, HandStatus<Player>>, HandStatus<Player>
     return ((previousAction?.amount ?? 0) + chips) >= (action.amount ?? 0);
   }
 
+  static getValidActions(
+    player: Player,
+    actionMap: { [p: string]: PlayerAction },
+  ) {
+    const { optioned } = player.getPlayer();
+
+    const ifBetOrRaiseInActionMap = Object.keys(actionMap)
+      .filter((key) => actionMap[key]?.type === PlayerActionEnum.BET
+            || actionMap[key]?.type === PlayerActionEnum.RAISE)
+      .length > 0;
+
+    if (optioned) {
+      return [
+        PlayerActionEnum.RAISE,
+        PlayerActionEnum.CHECK,
+        PlayerActionEnum.FOLD,
+      ];
+    } if (ifBetOrRaiseInActionMap) {
+      return [
+        PlayerActionEnum.CALL,
+        PlayerActionEnum.RAISE,
+        PlayerActionEnum.FOLD,
+      ];
+    }
+    return [
+      PlayerActionEnum.CHECK,
+      PlayerActionEnum.BET,
+      PlayerActionEnum.FOLD,
+    ];
+  }
+
   private getNextHighestWagerFromAllInPlayers(wager: number) {
     let wagers = this.allinPlayers
       .map((p) => p.getPlayer().action.amount)
