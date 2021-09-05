@@ -97,7 +97,7 @@ class Player extends PlayerAbstract<PlayerAction>
   interactiveCollector: { [key: string]: any }[];
 
   unsubscribe(): void {
-    throw new Error('Method not implemented.');
+    this.disposableBag.unsubscribe();
   }
 
   onChipsChangeObservable: Subject<{ chips: number; player: Player }> = new Subject();

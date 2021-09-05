@@ -18,6 +18,7 @@ import {
 export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
   extends CroupierAbstract<
   PlayerUnscheduled,
+  Player,
   Match,
   CroupierAction<PlayerUnscheduled> | PlayerAction | PlayerShowDownAction
   >
@@ -90,7 +91,7 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     }));
   }
 
-  protected previousMatchPlayers: Player[] = [];
+  protected playersInGame: Player[] = [];
 
   protected match: Match = {
     interactiveCollector: [],
@@ -131,7 +132,7 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
 
   getCroupier(): {
     id: string; owner: PlayerUnscheduled; stage: CroupierScheduledStage;
-    players: PlayerUnscheduled[]; match?: Match;
+    players: PlayerUnscheduled[]; match?: Match; playersInGame: Player[]
   } {
     return {
       id: this.id,
@@ -139,6 +140,7 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       stage: this.stage,
       players: this.players,
       match: this.match,
+      playersInGame: this.playersInGame,
     };
   }
 
@@ -178,7 +180,7 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       { name: p.name, id: p.id, chips: this.chips },
     ));
 
-    this.previousMatchPlayers = players;
+    this.playersInGame = players;
 
     const pool = new Pool<Hand, Round<Hand>>({
       players: players.filter(() => true),
@@ -217,17 +219,19 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       match: nextMatch,
     });
     this.stage = CroupierScheduledStage.PLAYING;
+
+    this.match.start();
   }
 
   protected restart(wager: number) {
     const players = this.players.map((player) => {
-      const previousIndex = this.previousMatchPlayers
+      const previousIndex = this.playersInGame
         .findIndex((p) => p.getPlayer().id === player.id);
-      if (previousIndex >= 0) return this.previousMatchPlayers[previousIndex];
+      if (previousIndex >= 0) return this.playersInGame[previousIndex];
       return new Player({ name: player.name, id: player.id, chips: this.chips });
     });
 
-    this.previousMatchPlayers = players;
+    this.playersInGame = players;
 
     const pool = new Pool<Hand, Round<Hand>>({
       players: players.filter(() => true),
@@ -261,6 +265,8 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
 
     this.match = nextMatch;
     this.stage = CroupierScheduledStage.PLAYING;
+
+    this.match.start();
   }
 
   protected pause() {

@@ -40,7 +40,7 @@ enum CroupierScheduledStage {
  * @description the croupier abstract class that
  * @abstract
  */
-abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match, Action> {
+abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Player, Match, Action> {
   constructor(initiator: CroupierInitiator<PlayerUnscheduled, Action>) {
     const {
       id, player, chips, channel,
@@ -82,6 +82,8 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match, Act
    */
   protected players: (PlayerUnscheduled)[] = [];
 
+  protected playersInGame: Player[] = [];
+
   /**
    * @description the match instance initialized during playing stage
    * @protected
@@ -100,7 +102,7 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Match, Act
    */
   protected abstract getCroupier(): {
     id: string; owner: PlayerUnscheduled; stage: CroupierScheduledStage;
-    players: PlayerUnscheduled[], match?: Match
+    players: PlayerUnscheduled[], match?: Match, playersInGame?: Player[]
   };
 
   /**
