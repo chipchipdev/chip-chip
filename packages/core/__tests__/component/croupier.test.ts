@@ -14,6 +14,41 @@ describe('Croupier Component', () => {
       channel: fakeChannel.getChannel(),
     });
 
+    let times = 0;
+
+    fakeCroupier.getCroupier().match.hand.onEnd(() => {
+      times += 1;
+      if (times !== 2) return;
+
+      setTimeout(() => {
+        fakeChannel.trigger({
+          id: fakePlayer.id,
+          type: CroupierActionEnum.PAUSE,
+        });
+
+        fakeChannel.trigger({
+          id: fakePlayer.id,
+          type: CroupierActionEnum.ARRANGE,
+          payload: {
+            id: casual.uuid,
+            name: casual.name,
+          },
+        });
+
+        fakeChannel.trigger({
+          id: fakePlayer.id,
+          type: CroupierActionEnum.RESTART,
+          payload: {
+            wager: 1,
+          },
+        });
+
+        if (fakeCroupier.getCroupier().players.length === 4) {
+          done();
+        }
+      });
+    });
+
     setTimeout(() => {
       const newId = casual.uuid;
 
@@ -57,44 +92,7 @@ describe('Croupier Component', () => {
           && fakeCroupier.getCroupier().players[0].id === newId
           && fakeCroupier.getCroupier().match.playing
       ) {
-        const { match, players } = fakeCroupier.getCroupier();
-
-        let times = 0;
-
-        match.hand.onEnd(() => {
-          times += 1;
-          if (times !== 2) return;
-
-          setTimeout(() => {
-            fakeChannel.trigger({
-              id: fakePlayer.id,
-              type: CroupierActionEnum.PAUSE,
-            });
-
-            fakeChannel.trigger({
-              id: fakePlayer.id,
-              type: CroupierActionEnum.ARRANGE,
-              payload: {
-                id: casual.uuid,
-                name: casual.name,
-              },
-            });
-
-            fakeChannel.trigger({
-              id: fakePlayer.id,
-              type: CroupierActionEnum.RESTART,
-              payload: {
-                wager: 1,
-              },
-            });
-
-            if (fakeCroupier.getCroupier().players.length === 4) {
-              done();
-            }
-          });
-        });
-
-        match.start(0);
+        const { players } = fakeCroupier.getCroupier();
 
         // hand 1
         setTimeout(() => {
