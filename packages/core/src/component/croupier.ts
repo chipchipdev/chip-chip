@@ -39,6 +39,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     super(initiator);
 
     this.stage = CroupierScheduledStage.PREPARING;
+    this.onStageChangeObservable.next({
+      stage: this.stage,
+      croupier: this,
+    });
     this.disposableBag.add(this.channel.subscribe((action: CroupierAction<PlayerUnscheduled>) => {
       // croupier preset actions
       switch (action.type) {
@@ -253,6 +257,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       match: nextMatch,
     });
     this.stage = CroupierScheduledStage.PLAYING;
+    this.onStageChangeObservable.next({
+      stage: this.stage,
+      croupier: this,
+    });
 
     this.match.start();
   }
@@ -299,6 +307,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
 
     this.match = nextMatch;
     this.stage = CroupierScheduledStage.PLAYING;
+    this.onStageChangeObservable.next({
+      stage: this.stage,
+      croupier: this,
+    });
 
     this.match.start();
   }
@@ -310,6 +322,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       match: this.match,
     });
     this.stage = CroupierScheduledStage.PAUSING;
+    this.onStageChangeObservable.next({
+      stage: this.stage,
+      croupier: this,
+    });
   }
 
   protected end() {
@@ -319,6 +335,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       match: this.match,
     });
     this.stage = CroupierScheduledStage.ENDED;
+    this.onStageChangeObservable.next({
+      stage: this.stage,
+      croupier: this,
+    });
   }
 
   disposableBag: Subscription = new Subscription();
@@ -467,4 +487,19 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
       croupier: this,
     });
   }
+
+  onStageChange(subscription: ({
+    stage,
+    croupier,
+  }:
+  { stage: CroupierScheduledStage; croupier: Croupier<PlayerUnscheduled> }) => void)
+    : Observable<{ stage: CroupierScheduledStage; croupier: Croupier<PlayerUnscheduled> }> {
+    const disposable = this.onStageChangeObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onStageChangeObservable;
+  }
+
+  onStageChangeObservable:
+  Subject<{ stage: CroupierScheduledStage; croupier: Croupier<PlayerUnscheduled> }>
+  = new Subject();
 }

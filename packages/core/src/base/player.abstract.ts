@@ -31,9 +31,9 @@ enum PlayerActionEnum {
 }
 
 enum PlayerShowDownActionEnum {
-  IN = 'IN',
-  OUT = 'OUT',
-  END = 'END',
+  IN = 'SHOWDOWN_IN',
+  OUT = 'SHOWDOWN_OUT',
+  END = 'SHOWDOWN_END',
 }
 
 /**

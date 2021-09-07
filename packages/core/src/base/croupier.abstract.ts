@@ -203,6 +203,8 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
 
   onChipsSetObservable: Observable<{ chips: number, croupier: Croupier }>
 
+  onStageChangeObservable: Observable<{ stage: CroupierScheduledStage, croupier: Croupier }>
+
   /**
    * @description add subscriptions for onArrangeObservable
    * @param subscription
@@ -274,6 +276,14 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
   onEnd:(subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
   =>Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onStageChangeObservable
+   * @param subscription
+   */
+  onStageChange:(subscription: ({ stage, croupier }:
+  { stage: CroupierScheduledStage, croupier: Croupier }) => void)
+  =>Observable<{ stage: CroupierScheduledStage, croupier: Croupier }>
 }
 
 export {
