@@ -8,13 +8,30 @@ describe('Croupier Component', () => {
     const fakeChannel = new Channel();
     const fakePlayer = { id: casual.uuid, name: casual.name };
     const fakeCroupier = new Croupier<typeof fakePlayer>({
-      id: fakeId,
-      player: fakePlayer,
-      chips: 1000,
       channel: fakeChannel.getChannel(),
     });
 
     let times = 0;
+
+    fakeChannel.trigger({
+      type: CroupierActionEnum.SET_CROUPIER_ID,
+      payload: {
+        id: fakeId,
+      },
+    });
+
+    fakeChannel.trigger({
+      type: CroupierActionEnum.SET_OWNER,
+      payload: fakePlayer,
+    });
+
+    fakeChannel.trigger({
+      id: fakePlayer.id,
+      type: CroupierActionEnum.SET_CHIPS,
+      payload: {
+        chips: 1000,
+      },
+    });
 
     fakeCroupier.getCroupier().match.hand.onEnd(() => {
       times += 1;

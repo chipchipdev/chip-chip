@@ -11,6 +11,9 @@ type PlayerInitiator = {
 };
 
 enum CroupierActionEnum {
+  SET_CROUPIER_ID = 'SET_CROUPIER_ID',
+  SET_OWNER = 'SET_OWNER',
+  SET_CHIPS = 'SET_CHIPS',
   ARRANGE = 'ARRANGE',
   REORDER = 'REORDER',
   START = 'START',

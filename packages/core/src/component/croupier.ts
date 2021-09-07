@@ -1,10 +1,11 @@
-import {
-  Observable, Subject, Subscription,
-} from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { isFunction } from 'lodash';
 import {
-  CroupierAbstract, CroupierInteractive, CroupierScheduledStage, CroupierActionEnum,
+  CroupierAbstract,
+  CroupierActionEnum,
   CroupierInitiator,
+  CroupierInteractive,
+  CroupierScheduledStage,
 } from '../base';
 import { Match } from './match';
 import { Player } from './player';
@@ -12,7 +13,11 @@ import { Pool } from './pool';
 import { Hand } from './hand';
 import { Round } from './round';
 import {
-  CroupierAction, CroupierActionReorder, CroupierActionStart, PlayerAction, PlayerShowDownAction,
+  CroupierAction,
+  CroupierActionReorder, CroupierActionSetChips, CroupierActionSetId, CroupierActionSetOwner,
+  CroupierActionStart,
+  PlayerAction,
+  PlayerShowDownAction,
 } from './action';
 
 export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
@@ -27,15 +32,44 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
   PlayerUnscheduled,
   Match
   > {
-  constructor(initiator: CroupierInitiator<
-  PlayerUnscheduled,
-  CroupierAction<PlayerUnscheduled> | PlayerAction | PlayerShowDownAction>) {
+  constructor(
+    initiator: CroupierInitiator<
+    CroupierAction<PlayerUnscheduled> | PlayerAction | PlayerShowDownAction>,
+  ) {
     super(initiator);
 
     this.stage = CroupierScheduledStage.PREPARING;
     this.disposableBag.add(this.channel.subscribe((action: CroupierAction<PlayerUnscheduled>) => {
-      if (action.id !== this.owner.id) return;
+      // croupier preset actions
       switch (action.type) {
+        case CroupierActionEnum.SET_CROUPIER_ID:
+          if ((action.payload as CroupierActionSetId).id) {
+            this.setId((action.payload as CroupierActionSetId).id);
+          }
+          return;
+        case CroupierActionEnum.SET_OWNER:
+          if (
+            (action.payload as CroupierActionSetOwner<PlayerUnscheduled>).id
+              && (action.payload as CroupierActionSetOwner<PlayerUnscheduled>).name
+              && !this.owner?.id
+              && !this.owner?.name
+          ) {
+            this.setOwner(action.payload as CroupierActionSetOwner<PlayerUnscheduled>);
+            this.arrange(action.payload as CroupierActionSetOwner<PlayerUnscheduled>);
+          }
+          return;
+        default:
+          break;
+      }
+
+      if (action.id !== this.owner.id) return;
+
+      switch (action.type) {
+        case CroupierActionEnum.SET_CHIPS:
+          if ((action.payload as CroupierActionSetChips).chips > 100) {
+            this.setChips((action.payload as CroupierActionSetChips).chips);
+          }
+          break;
         case CroupierActionEnum.ARRANGE:
           if (
             (action.payload as PlayerUnscheduled).id
@@ -370,4 +404,67 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     this.disposableBag.add(disposable);
     return this.onEndObservable;
   };
+
+  onChipsSet(subscription: ({
+    chips,
+    croupier,
+  }:
+  { chips: number; croupier: Croupier<PlayerUnscheduled> }) => void):
+    Observable<{ chips: number; croupier: Croupier<PlayerUnscheduled> }> {
+    const disposable = this.onChipsSetObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onChipsSetObservable;
+  }
+
+  onChipsSetObservable:
+  Subject<{ chips: number; croupier: Croupier<PlayerUnscheduled> }> = new Subject();
+
+  onIdSet(subscription: ({
+    id,
+    croupier,
+  }:
+  { id: string; croupier: Croupier<PlayerUnscheduled> }) => void):
+    Observable<{ id: string; croupier: Croupier<PlayerUnscheduled> }> {
+    const disposable = this.onIdSetObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onIdSetObservable;
+  }
+
+  onIdSetObservable:
+  Subject<{ id: string; croupier: Croupier<PlayerUnscheduled> }> = new Subject();
+
+  onOwnerSet(subscription: ({
+    owner,
+    croupier,
+  }:
+  { owner: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }) => void):
+    Observable<{ owner: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }> {
+    const disposable = this.onOwnerSetObservable.subscribe(subscription);
+    this.disposableBag.add(disposable);
+    return this.onOwnerSetObservable;
+  }
+
+  onOwnerSetObservable:
+  Subject<{ owner: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }> = new Subject();
+
+  protected setChips(chips: number) {
+    this.chips = chips;
+    this.onChipsSetObservable.next({
+      chips,
+      croupier: this,
+    });
+  }
+
+  protected setId(id: string) {
+    this.id = id;
+    this.onIdSetObservable.next({ id, croupier: this });
+  }
+
+  protected setOwner(player: PlayerUnscheduled) {
+    this.owner = player;
+    this.onOwnerSetObservable.next({
+      owner: player,
+      croupier: this,
+    });
+  }
 }

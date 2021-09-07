@@ -1,5 +1,5 @@
 import React from 'react';
-import { Croupier, Channel } from '@chip-chip/core/lib';
+import { Croupier, Channel } from '@chip-chip/core';
 import ReactDOM from 'react-dom';
 
 const App = () => {

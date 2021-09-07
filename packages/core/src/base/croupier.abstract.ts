@@ -7,10 +7,10 @@ type Identifier = {
 /**
  * @description the initiator for create a croupier instance
  */
-type CroupierInitiator<PlayerUnscheduled extends Identifier, Action> = {
-  id: string;
-  player: PlayerUnscheduled
-  chips: number
+type CroupierInitiator<Action> = {
+  // id?: string;
+  // player: PlayerUnscheduled
+  // chips: number
   channel: Observable<Action>
 };
 
@@ -41,15 +41,18 @@ enum CroupierScheduledStage {
  * @abstract
  */
 abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Player, Match, Action> {
-  constructor(initiator: CroupierInitiator<PlayerUnscheduled, Action>) {
+  constructor(
+    initiator: CroupierInitiator<Action>,
+  ) {
     const {
-      id, player, chips, channel,
+      // id, player, chips,
+      channel,
     } = initiator;
-    this.id = id;
-    this.owner = player;
-    this.players.push(player);
+    // this.id = id;
+    // this.owner = player;
+    // this.players.push(player);
     this.stage = CroupierScheduledStage.PREPARING;
-    this.chips = chips;
+    // this.chips = chips;
     this.channel = channel;
   }
 
@@ -142,6 +145,12 @@ abstract class CroupierAbstract<PlayerUnscheduled extends Identifier, Player, Ma
    * @description end all the game
    */
   protected abstract end();
+
+  protected abstract setId(id: string);
+
+  protected abstract setOwner(player: PlayerUnscheduled);
+
+  protected abstract setChips(chips: number);
 }
 
 /**
@@ -188,6 +197,12 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onEndObservable: Observable<{ match: Match, croupier: Croupier }>
 
+  onOwnerSetObservable: Observable<{ owner: PlayerUnscheduled, croupier: Croupier }>;
+
+  onIdSetObservable: Observable<{ id: string, croupier: Croupier }>;
+
+  onChipsSetObservable: Observable<{ chips: number, croupier: Croupier }>
+
   /**
    * @description add subscriptions for onArrangeObservable
    * @param subscription
@@ -227,6 +242,30 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
   onPause: (subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
   => Observable<{ match: Match, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onOwnerSetObservable
+   * @param subscription
+   */
+  onOwnerSet:(subscription: ({ owner, croupier }:
+  { owner: PlayerUnscheduled, croupier: Croupier }) => void)
+  =>Observable<{ owner: PlayerUnscheduled, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onIdSetObservable
+   * @param subscription
+   */
+  onIdSet:(subscription: ({ id, croupier }:
+  { id: string, croupier: Croupier }) => void)
+  =>Observable<{ id: string, croupier: Croupier }>
+
+  /**
+   * @description add subscriptions for onChipsSetObservable
+   * @param subscription
+   */
+  onChipsSet:(subscription: ({ chips, croupier }:
+  { chips: number, croupier: Croupier }) => void)
+  =>Observable<{ chips: number, croupier: Croupier }>
 
   /**
    * @description add subscriptions for onEndObservable
