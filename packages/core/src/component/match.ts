@@ -165,39 +165,38 @@ export class Match
 
   onStart(subscription: ({ match }:
   { match: Match }) => void):
-    Observable<{ match: Match }> {
+    Subscription {
     const disposable = this.onStartObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onStart: subscription });
-    return this.onStartObservable;
+    return disposable;
   }
 
   onPause(subscription: ({ match }:
   { match: Match }) => void):
-    Observable<{ match: Match }> {
+    Subscription {
     const disposable = this.onPauseObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onPause: subscription });
-    return this.onPauseObservable;
+    return disposable;
   }
 
   onPlay(subscription: ({ match, hand }:
   { match: Match;
     hand: Hand }) => void):
-    Observable<{ match: Match;
-      hand: Hand }> {
+    Subscription {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onPlay: subscription });
-    return this.onPlayObservable;
+    return disposable;
   }
 
   onEnd(subscription: ({ match }:
   { match: Match }) => void):
-    Observable<{ match: Match }> {
+    Subscription {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onEnd: subscription });
-    return this.onEndObservable;
+    return disposable;
   }
 }

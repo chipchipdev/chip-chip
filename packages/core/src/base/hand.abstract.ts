@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
 import { RoundStateEnum } from './round.abstract';
@@ -74,7 +74,7 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    */
   onStart:(subscription: ({ hand }:
   { hand: Hand }) => void)
-  => Observable<{ hand: Hand }>
+  => Subscription
 
   /**
    * @description add subscriptions for onEndObservable
@@ -82,7 +82,7 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    */
   onEnd:(subscription: ({ hand }:
   { hand: Hand }) => void)
-  => Observable<{ hand: Hand }>
+  => Subscription
 
   /**
    * @description add subscriptions for onPlayObservable
@@ -90,7 +90,7 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    */
   onPlay:(subscription: ({ hand, round, is }:
   { hand: Hand, round: Round, is: RoundStateEnum }) => void)
-  => Observable<{ hand: Hand, round: Round, is: RoundStateEnum }>
+  => Subscription
 
   /**
    * @description add subscriptions for onShowdownObservable
@@ -98,7 +98,7 @@ interface HandInteractive<Hand, Round> extends MatchSharedInteractive{
    */
   onShowdown:(subscription: ({ hand }:
   { hand: Hand }) => void)
-  => Observable<{ hand: Hand }>
+  => Subscription
 }
 
 export {

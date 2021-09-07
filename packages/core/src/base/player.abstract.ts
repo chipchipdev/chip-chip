@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MatchSharedInteractive } from './match.abstract';
 
 /**
@@ -213,7 +213,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    * @param subscription
    */
   onChipsChange: (subscription: ({ chips, player }:{ chips: number, player: Player }) => void)
-  => Observable<{ chips: number, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onJoinedStateChangeObservable
@@ -221,7 +221,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onJoinedStateChange: (subscription: ({ joined, player }:
   { joined: boolean, player: Player }) => void)
-  => Observable<{ joined: boolean, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onFoldedStateChangeObservable
@@ -229,7 +229,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onFoldedStateChange: (subscription: ({ folded, player }:
   { folded: boolean, player: Player }) => void)
-  => Observable<{ folded: boolean, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onAllinStateChangeObservable
@@ -237,7 +237,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onAllinStateChange: (subscription: ({ allin, player }:
   { allin: boolean, player: Player }) => void)
-  => Observable<{ allin: boolean, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onBetStateChangeObservable
@@ -245,7 +245,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onBetStateChange: (subscription: ({ bet, player }:
   { bet: boolean, player: Player }) => void)
-  => Observable<{ bet: boolean, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onOptionedStateChangeObservable
@@ -253,7 +253,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onOptionedStateChange: (subscription: ({ optioned, player }:
   { optioned: boolean, player: Player }) => void)
-  => Observable<{ optioned: boolean, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onActionChangeObservable
@@ -261,7 +261,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onActionChange: (subscription: ({ action, player }:
   { action: PlayerAction, player: Player }) => void)
-  =>Observable<{ action: PlayerAction, player: Player }>;
+  => Subscription
 
   /**
    * @description add subscriptions for onValidActionsChangeObservable
@@ -269,7 +269,7 @@ interface PlayerInteractive<Player, PlayerAction> extends MatchSharedInteractive
    */
   onValidActionsChange: (subscription: ({ actions, player }:
   { actions: PlayerActionEnum[], player: Player }) => void)
-  =>Observable<{ actions: PlayerActionEnum[], player: Player }>;
+  => Subscription
 }
 
 export {

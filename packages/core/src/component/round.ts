@@ -47,38 +47,38 @@ export class Round<Hand>
 
   onPlay:
   (subscription: ({ round }: { round: Round<Hand>; }) => void)
-  => Observable<{ round: Round<Hand>; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onPlay: subscription });
-    return this.onPlayObservable;
+    return disposable;
   };
 
   onEnd:
   (subscription: ({ round }: { round: Round<Hand>; }) => void)
-  => Observable<{ round: Round<Hand>; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onEnd: subscription });
-    return this.onEndObservable;
+    return disposable;
   };
 
   onMonitor:
   (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void)
-  => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onMonitorObservable.subscribe(subscription);
     this.interactiveCollector.push({ onMonitor: subscription });
     this.disposableBag.add(disposable);
-    return this.onMonitorObservable;
+    return disposable;
   };
 
   onDeal:
   (subscription: ({ player, round }: { player: Player; round: Round<Hand>; }) => void)
-  => Observable<{ player: Player; round: Round<Hand>; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onDealObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onDeal: subscription });
-    return this.onDealObservable;
+    return disposable;
   };
 
   disposableBag: Subscription = new Subscription();

@@ -66,26 +66,26 @@ export class Showdown
 
   onEndObservable: Subject<{ players: Player[] }> = new Subject();
 
-  onPlay(subscription: () => void): Observable<void> {
+  onPlay(subscription: () => void): Subscription {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onPlayObservable;
+    return disposable;
   }
 
   onDeal(subscription:
   ({ players }: { players: Player[] }) => void)
-    : Observable<{ players: Player[] }> {
+    : Subscription {
     const disposable = this.onDealObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onDealObservable;
+    return disposable;
   }
 
   onEnd(subscription:
   ({ players }: { players: Player[] }) => void):
-    Observable<{ players: Player[] }> {
+    Subscription {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onEndObservable;
+    return disposable;
   }
 
   unsubscribe(): void {

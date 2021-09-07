@@ -189,37 +189,37 @@ export class Hand
 
   onStart:
   (subscription: ({ hand }: { hand: Hand; }) => void)
-  => Observable<{ hand: Hand; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onStartObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onStart: subscription });
-    return this.onStartObservable;
+    return disposable;
   };
 
   onEnd:
   (subscription: ({ hand }: { hand: Hand; }) => void)
-  => Observable<{ hand: Hand; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onEnd: subscription });
-    return this.onEndObservable;
+    return disposable;
   };
 
   onPlay: (subscription: ({ hand, round, is }:
   { hand: Hand; round: Round<Hand>; is: RoundStateEnum; }) => void)
-  => Observable<{ hand: Hand; round: Round<Hand>; is: RoundStateEnum; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onPlayObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onPlay: subscription });
-    return this.onPlayObservable;
+    return disposable;
   };
 
   onShowdown:
   (subscription: ({ hand }: { hand: Hand; }) => void)
-  => Observable<{ hand: Hand; }> = (subscription) => {
+  => Subscription = (subscription) => {
     const disposable = this.onShowdownObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
     this.interactiveCollector.push({ onShowdown: subscription });
-    return this.onEndObservable;
+    return disposable;
   };
 }

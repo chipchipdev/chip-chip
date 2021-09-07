@@ -386,67 +386,66 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
 
   onArrange: (subscription: ({ player, croupier }:
   { player: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ player: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onArrangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onArrangeObservable;
+    return disposable;
   };
 
   onReorder: (subscription: ({ players, croupier }:
   { players: PlayerUnscheduled[]; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ players: PlayerUnscheduled[]; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onReorderObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onReorderObservable;
+    return disposable;
   };
 
   onStart: (subscription: ({ match, croupier }:
   { match: Match; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onStartObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onStartObservable;
+    return disposable;
   };
 
   onRestart: (subscription: ({ match, croupier }:
   { match: Match; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onRestartObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onRestartObservable;
+    return disposable;
   };
 
   onPause: (subscription: ({ match, croupier }:
   { match: Match; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onPauseObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onPauseObservable;
+    return disposable;
   };
 
   onEnd: (subscription: ({ match, croupier }:
   { match: Match; croupier: Croupier<PlayerUnscheduled>; }) => void)
-  => Observable<{ match: Match; croupier: Croupier<PlayerUnscheduled> }>
+  => Subscription
   = (subscription) => {
     const disposable = this.onEndObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onEndObservable;
+    return disposable;
   };
 
   onChipsSet(subscription: ({
     chips,
     croupier,
   }:
-  { chips: number; croupier: Croupier<PlayerUnscheduled> }) => void):
-    Observable<{ chips: number; croupier: Croupier<PlayerUnscheduled> }> {
+  { chips: number; croupier: Croupier<PlayerUnscheduled> }) => void): Subscription {
     const disposable = this.onChipsSetObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onChipsSetObservable;
+    return disposable;
   }
 
   onChipsSetObservable:
@@ -457,10 +456,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     croupier,
   }:
   { id: string; croupier: Croupier<PlayerUnscheduled> }) => void):
-    Observable<{ id: string; croupier: Croupier<PlayerUnscheduled> }> {
+    Subscription {
     const disposable = this.onIdSetObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onIdSetObservable;
+    return disposable;
   }
 
   onIdSetObservable:
@@ -471,10 +470,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     croupier,
   }:
   { owner: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }) => void):
-    Observable<{ owner: PlayerUnscheduled; croupier: Croupier<PlayerUnscheduled> }> {
+    Subscription {
     const disposable = this.onOwnerSetObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onOwnerSetObservable;
+    return disposable;
   }
 
   onOwnerSetObservable:
@@ -506,10 +505,10 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
     croupier,
   }:
   { stage: CroupierScheduledStage; croupier: Croupier<PlayerUnscheduled> }) => void)
-    : Observable<{ stage: CroupierScheduledStage; croupier: Croupier<PlayerUnscheduled> }> {
+    : Subscription {
     const disposable = this.onStageChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onStageChangeObservable;
+    return disposable;
   }
 
   onStageChangeObservable:

@@ -211,7 +211,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onArrange:(subscription: ({ player, croupier }:
   { player: PlayerUnscheduled, croupier: Croupier }) => void)
-  => Observable<{ player: PlayerUnscheduled, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onReorderObservable
@@ -219,7 +219,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onReorder:(subscription: ({ players, croupier }:
   { players: PlayerUnscheduled[], croupier: Croupier }) => void)
-  => Observable<{ players: PlayerUnscheduled[], croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onStartObservable
@@ -227,7 +227,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onStart:(subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
-  => Observable<{ match: Match, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onRestartObservable
@@ -235,7 +235,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onRestart: (subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
-  => Observable<{ match: Match, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onPauseObservable
@@ -243,7 +243,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onPause: (subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
-  => Observable<{ match: Match, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onOwnerSetObservable
@@ -251,7 +251,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onOwnerSet:(subscription: ({ owner, croupier }:
   { owner: PlayerUnscheduled, croupier: Croupier }) => void)
-  =>Observable<{ owner: PlayerUnscheduled, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onIdSetObservable
@@ -259,7 +259,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onIdSet:(subscription: ({ id, croupier }:
   { id: string, croupier: Croupier }) => void)
-  =>Observable<{ id: string, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onChipsSetObservable
@@ -267,7 +267,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onChipsSet:(subscription: ({ chips, croupier }:
   { chips: number, croupier: Croupier }) => void)
-  =>Observable<{ chips: number, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onEndObservable
@@ -275,7 +275,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onEnd:(subscription: ({ match, croupier }:
   { match: Match, croupier: Croupier }) => void)
-  =>Observable<{ match: Match, croupier: Croupier }>
+  => Subscription
 
   /**
    * @description add subscriptions for onStageChangeObservable
@@ -283,7 +283,7 @@ interface CroupierInteractive<Croupier, PlayerUnscheduled, Match> {
    */
   onStageChange:(subscription: ({ stage, croupier }:
   { stage: CroupierScheduledStage, croupier: Croupier }) => void)
-  =>Observable<{ stage: CroupierScheduledStage, croupier: Croupier }>
+  => Subscription
 }
 
 export {

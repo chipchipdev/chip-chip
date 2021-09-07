@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MatchSharedInteractive } from './match.abstract';
 
 enum ShowdownEnum {
@@ -50,21 +50,21 @@ interface ShowdownInteractive<Player>
    * @param subscription
    */
   onPlay:(subscription: () => void)
-  => Observable<void>
+  => Subscription
 
   /**
    * @description add subscriptions for onDealObservable
    * @param subscription
    */
   onDeal:(subscription: ({ players }: { players: Player[] }) => void)
-  => Observable<{ players: Player[] }>
+  => Subscription
 
   /**
    * @description add subscriptions for onEndObservable
    * @param subscription
    */
   onEnd:(subscription: ({ players }: { players: Player[] }) => void)
-  => Observable<{ players: Player[] }>
+  => Subscription
 }
 
 export {

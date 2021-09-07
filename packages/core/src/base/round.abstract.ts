@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { MatchSharedBase, MatchSharedInitiator, MatchSharedInteractive } from './match.abstract';
 
 /**
@@ -96,7 +96,7 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
    */
   onPlay:(subscription: ({ round }:
   { round: Round }) => void)
-  => Observable<{ round: Round }>
+  => Subscription
 
   /**
    * @description add subscriptions for onEndObservable
@@ -104,7 +104,7 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
    */
   onEnd:(subscription: ({ round }:
   { round: Round }) => void)
-  => Observable<{ round: Round }>
+  => Subscription
 
   /**
    * @description add subscriptions for onMonitorObservable
@@ -112,7 +112,7 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
    */
   onMonitor:(subscription: ({ player, round }:
   { player: Player, round: Round }) => void)
-  => Observable<{ player: Player, round: Round }>
+  => Subscription
 
   /**
    * @description add subscriptions for onDealObservable
@@ -120,7 +120,7 @@ interface RoundInteractive<Round, Player> extends MatchSharedInteractive{
    */
   onDeal:(subscription: ({ player, round }:
   { player: Player, round: Round }) => void)
-  => Observable<{ player: Player, round: Round }>
+  => Subscription
 
 }
 

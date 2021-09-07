@@ -149,42 +149,42 @@ class Player extends PlayerAbstract<PlayerAction>
 
   onChipsChange: (
     subscription: ({ chips, player }: { chips: number; player: Player }) => void
-  ) => Observable<{ chips: number; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onChipsChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onChipsChangeObservable;
+    return disposable;
   };
 
   onJoinedStateChange: (
     subscription: ({ joined, player }: { joined: boolean; player: Player }) => void
-  ) => Observable<{ joined: boolean; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onJoinedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onJoinedStateChangeObservable;
+    return disposable;
   };
 
   onFoldedStateChange: (
     subscription: ({ folded, player }: { folded: boolean; player: Player }) => void
-  ) => Observable<{ folded: boolean; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onFoldedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onFoldedStateChangeObservable;
+    return disposable;
   };
 
   onAllinStateChange: (
     subscription: ({ allin, player }: { allin: boolean; player: Player }) => void
-  ) => Observable<{ allin: boolean; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onAllinStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onAllinStateChangeObservable;
+    return disposable;
   };
 
   onBetStateChange: (
     subscription: ({ bet, player }: { bet: boolean; player: Player }) => void
-  ) => Observable<{ bet: boolean; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onBetStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onBetStateChangeObservable;
+    return disposable;
   };
 
   onOptionedStateChange: (
@@ -195,10 +195,10 @@ class Player extends PlayerAbstract<PlayerAction>
       optioned: boolean;
       player: Player;
     }) => void
-  ) => Observable<{ optioned: boolean; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onOptionedStateChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onOptionedStateChangeObservable;
+    return disposable;
   };
 
   onActionChange: (
@@ -209,10 +209,10 @@ class Player extends PlayerAbstract<PlayerAction>
       action: PlayerAction;
       player: Player;
     }) => void
-  ) => Observable<{ action: PlayerAction; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onActionChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onActionChangeObservable;
+    return disposable;
   };
 
   onValidActionsChange: (
@@ -223,10 +223,10 @@ class Player extends PlayerAbstract<PlayerAction>
       actions: PlayerActionEnum[];
       player: Player;
     }) => void
-  ) => Observable<{ actions: PlayerActionEnum[]; player: Player }> = (subscription) => {
+  ) => Subscription = (subscription) => {
     const disposable = this.onValidActionsChangeObservable.subscribe(subscription);
     this.disposableBag.add(disposable);
-    return this.onValidActionsChangeObservable;
+    return disposable;
   };
 }
 

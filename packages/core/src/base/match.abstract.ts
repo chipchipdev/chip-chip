@@ -214,28 +214,28 @@ interface MatchInteractive<Match, Hand> extends MatchSharedInteractive{
    */
   onStart:(subscription: ({ match }:
   { match: Match }) => void)
-  => Observable<{ match: Match }>
+  => Subscription
   /**
    * @description add subscriptions for onPauseObservable
    * @param subscription
    */
   onPause:(subscription: ({ match }:
   { match: Match }) => void)
-  => Observable<{ match: Match }>
+  => Subscription
   /**
    * @description add subscriptions for onEndObservable
    * @param subscription
    */
   onEnd:(subscription: ({ match }:
   { match: Match }) => void)
-  => Observable<{ match: Match }>
+  => Subscription
   /**
    * @description add subscriptions for onPlayObservable
    * @param subscription
    */
   onPlay:(subscription: ({ match, hand }:
   { match: Match, hand: Hand }) => void)
-  => Observable<{ match: Match, hand: Hand }>
+  => Subscription
 }
 
 export {
