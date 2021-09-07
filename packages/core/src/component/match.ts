@@ -18,6 +18,7 @@ import { Hand } from './hand';
 import { Round } from './round';
 import { Pool } from './pool';
 import { PlayerAction, PlayerShowDownAction } from './action';
+import { Showdown } from './showdown';
 
 export class Match
   extends MatchAbstract<
@@ -43,6 +44,16 @@ export class Match
           (subscription) => this.hand.round.interactiveCollector.push({ onPlay: subscription }),
       onEnd:
           (subscription) => this.hand.round.interactiveCollector.push({ onEnd: subscription }),
+      unsubscribe() {},
+    },
+    showdown: {
+      interactiveCollector: [],
+      onDeal:
+          (subscription) => this.hand.showdown.interactiveCollector.push({ onDeal: subscription }),
+      onPlay:
+          (subscription) => this.hand.showdown.interactiveCollector.push({ onPlay: subscription }),
+      onEnd:
+          (subscription) => this.hand.showdown.interactiveCollector.push({ onEnd: subscription }),
       unsubscribe() {},
     },
     onStart: (subscription) => this.hand.interactiveCollector.push({ onStart: subscription }),

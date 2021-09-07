@@ -155,6 +155,19 @@ export class Croupier<PlayerUnscheduled extends { id: string, name: string }>
           .push({ onEnd: subscription }),
         unsubscribe() {},
       },
+      showdown: {
+        interactiveCollector: [],
+        onDeal:
+            (subscription) => this.match.hand.showdown.interactiveCollector
+              .push({ onDeal: subscription }),
+        onPlay:
+            (subscription) => this.match.hand.showdown.interactiveCollector
+              .push({ onPlay: subscription }),
+        onEnd:
+            (subscription) => this.match.hand.showdown.interactiveCollector
+              .push({ onEnd: subscription }),
+        unsubscribe() {},
+      },
       onStart: (subscription) => this.match.hand.interactiveCollector
         .push({ onStart: subscription }),
       onPlay: (subscription) => this.match.hand.interactiveCollector

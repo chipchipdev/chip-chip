@@ -21,13 +21,11 @@ import { PlayerAction, PlayerShowDownAction } from './action';
 import { Showdown } from './showdown';
 
 export class Hand
-  extends HandAbstract<
-  Pool<Hand, Round<Hand>>,
+  extends HandAbstract<Pool<Hand, Round<Hand>>,
   Hand,
   Round<Hand>,
   Player,
-  PlayerAction | PlayerShowDownAction
-  >
+  PlayerAction | PlayerShowDownAction>
   implements HandInteractive<Hand, Round<Hand>> {
   status: BehaviorSubject<HandStatus<Player>> = new BehaviorSubject({
     winners: [],
@@ -40,8 +38,18 @@ export class Hand
     onMonitor: (subscription) => this.round.interactiveCollector.push({ onMonitor: subscription }),
     onPlay: (subscription) => this.round.interactiveCollector.push({ onPlay: subscription }),
     onEnd: (subscription) => this.round.interactiveCollector.push({ onEnd: subscription }),
-    unsubscribe() {},
+    unsubscribe() {
+    },
   } as unknown as Round<Hand>;
+
+  showdown = {
+    interactiveCollector: [],
+    onDeal: (subscription) => this.showdown.interactiveCollector.push({ onDeal: subscription }),
+    onPlay: (subscription) => this.showdown.interactiveCollector.push({ onPlay: subscription }),
+    onEnd: (subscription) => this.showdown.interactiveCollector.push({ onEnd: subscription }),
+    unsubscribe() {
+    },
+  } as unknown as Showdown;
 
   start(): Observable<HandStatus<Player>> {
     this.onStartObservable.next({
@@ -82,10 +90,27 @@ export class Hand
           });
           this.round?.unsubscribe();
           this.round?.end();
-          return new Showdown({
+          const nextShowdown = new Showdown({
             players: this.players,
             channel: this.channel as Observable<PlayerShowDownAction>,
-          }).play(this.status);
+          });
+
+          const previousInteractiveCollector = this.showdown?.interactiveCollector?.length > 0
+            ? this.showdown.interactiveCollector
+            : undefined;
+
+          previousInteractiveCollector?.forEach((interaction) => {
+            const key = Object.keys(interaction)[0];
+            if (isFunction(nextShowdown[key])) {
+              nextShowdown[key].call(nextShowdown, interaction[key]);
+            }
+          });
+
+          this.showdown?.unsubscribe();
+
+          this.showdown = nextShowdown;
+
+          return this.showdown.play(this.status);
         }),
       )
       .subscribe();
