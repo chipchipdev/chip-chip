@@ -107,6 +107,7 @@ export class Match
     });
 
     nextHand.round = this.hand.round;
+    nextHand.showdown = this.hand.showdown;
 
     const previousInteractiveCollector = this.hand?.interactiveCollector?.length > 0
       ? this.hand.interactiveCollector

@@ -24,6 +24,7 @@ export class Hand
   extends HandAbstract<Pool<Hand, Round<Hand>>,
   Hand,
   Round<Hand>,
+  Showdown,
   Player,
   PlayerAction | PlayerShowDownAction>
   implements HandInteractive<Hand, Round<Hand>> {
@@ -32,7 +33,7 @@ export class Hand
     completed: false,
   });
 
-  round = {
+  public round = {
     interactiveCollector: [],
     onDeal: (subscription) => this.round.interactiveCollector.push({ onDeal: subscription }),
     onMonitor: (subscription) => this.round.interactiveCollector.push({ onMonitor: subscription }),
@@ -42,7 +43,7 @@ export class Hand
     },
   } as unknown as Round<Hand>;
 
-  showdown = {
+  public showdown = {
     interactiveCollector: [],
     onDeal: (subscription) => this.showdown.interactiveCollector.push({ onDeal: subscription }),
     onPlay: (subscription) => this.showdown.interactiveCollector.push({ onPlay: subscription }),
@@ -90,6 +91,7 @@ export class Hand
           });
           this.round?.unsubscribe();
           this.round?.end();
+
           const nextShowdown = new Showdown({
             players: this.players,
             channel: this.channel as Observable<PlayerShowDownAction>,

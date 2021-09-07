@@ -17,8 +17,12 @@ type HandStatus<Player> = {
   winners?: Player[];
 };
 
-abstract class HandAbstract<Pool, Hand, Round, Player, PlayerAction>
+abstract class HandAbstract<Pool, Hand, Round, Showdown, Player, PlayerAction>
   extends MatchSharedBase<Pool, Hand, Round, Player, PlayerAction> {
+  abstract round: Round;
+
+  abstract showdown: Showdown;
+
   /**
    * @description the hand status observable, will be updated after a round is ended
    */
