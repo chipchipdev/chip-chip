@@ -22,32 +22,34 @@ export function useChipChip() {
   const { round, showdown } = croupier.getCroupier().match.hand;
   const { hand } = croupier.getCroupier().match;
 
+  const subscriptions = [];
+
   useEffect(() => {
-    croupier.onArrange(({ croupier: c }) => {
+    subscriptions.push(croupier.onArrange(({ croupier: c }) => {
       setPlayersUnscheduled([]);
       setPlayersUnscheduled(c.getCroupier().players);
-    });
+    }));
 
-    croupier.onStart(({ croupier: c }) => {
+    subscriptions.push(croupier.onStart(({ croupier: c }) => {
       setPlayers([]);
       setPlayers(c.getCroupier().playersInGame);
-    });
+    }));
 
-    croupier.onStageChange(({ croupier: c }) => {
+    subscriptions.push(croupier.onStageChange(({ croupier: c }) => {
       setMatchStage(c.getCroupier().stage);
-    });
+    }));
 
-    hand.onShowdown(() => {
+    subscriptions.push(hand.onShowdown(() => {
       setInShowdownStage(true);
-    });
+    }));
 
-    round.onPlay(({ round: r }) => {
+    subscriptions.push(round.onPlay(({ round: r }) => {
       setPlayers([]);
       setHandStage(r.is);
       setPlayers(croupier.getCroupier().playersInGame);
-    });
+    }));
 
-    round.onMonitor(({ player }) => {
+    subscriptions.push(round.onMonitor(({ player }) => {
       setPlayerActing(undefined);
       setPlayerActing(player);
       const { playersInGame, id } = croupier.getCroupier();
@@ -55,25 +57,31 @@ export function useChipChip() {
       setValidActions(
         currentPlayer?.getPlayer?.().validActions ?? [],
       );
-    });
+    }));
 
-    round.onDeal(() => {
+    subscriptions.push(round.onDeal(() => {
       setPlayers([]);
       setPlayers(croupier.getCroupier().playersInGame);
-    });
+    }));
 
-    showdown.onDeal(({ players: ps }) => {
+    subscriptions.push(showdown.onDeal(({ players: ps }) => {
       setPlayersShowdown([]);
       setPlayersShowdown(ps);
-    });
+    }));
 
-    hand.onEnd(() => {
+    subscriptions.push(hand.onEnd(() => {
       setPlayerActing(undefined);
       setValidActions(undefined);
       setHandStage(undefined);
       setInShowdownStage(false);
       setPlayersShowdown([]);
-    });
+    }));
+
+    return () => {
+      subscriptions.forEach((subscription) => {
+        subscription?.unsubscribe?.();
+      });
+    };
   }, []);
 
   return {
