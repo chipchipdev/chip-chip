@@ -14,7 +14,14 @@ const config: Configuration = {
   module: {
     rules: [
       {
-        test: /\.(ts|js)x?$/,
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+        },
+      },
+      {
+        test: /\.(js)?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -33,8 +40,9 @@ const config: Configuration = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'lib'),
+    filename: 'index.js',
+    libraryTarget: 'umd',
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({
@@ -42,13 +50,16 @@ const config: Configuration = {
       eslint: {
         files: './src/**/*',
       },
+      typescript: {
+        configFile: path.resolve(__dirname, 'tsconfig.json'),
+      },
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),
     }),
   ],
   devServer: {
-    static: path.join(__dirname, 'build'),
+    static: path.join(__dirname, 'lib'),
     compress: true,
     port: 4000,
   },

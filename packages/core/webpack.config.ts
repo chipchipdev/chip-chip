@@ -3,14 +3,14 @@ const path = require('path');
 
 /* webpack plugins */
 // const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /**
  * @description webpack build config ( for typescript )
  */
 const config = {
   mode: 'none',
-  entry: './src/index.ts',
+  entry: './src/index.tsx',
   devtool: 'inline-source-map',
   target: 'web',
   output: {
@@ -51,11 +51,11 @@ const config = {
   },
   // fork tsconfig.json
   plugins: [
-    // new ForkTsCheckerWebpackPlugin({
-    //   typescript: {
-    //     configFile: path.resolve(__dirname, 'tsconfig.json'),
-    //   },
-    // }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: path.resolve(__dirname, 'tsconfig.json'),
+      },
+    }),
     // new PeerDepsExternalsPlugin(),
   ],
 };

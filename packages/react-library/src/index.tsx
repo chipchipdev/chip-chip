@@ -1,2 +1,7 @@
-export * from './chip-chip-provider';
-export * from './use-chip-chip';
+import { ChipChipProvider } from './chip-chip-provider';
+import { useChipChip } from './use-chip-chip';
+
+export {
+  useChipChip,
+  ChipChipProvider,
+};
