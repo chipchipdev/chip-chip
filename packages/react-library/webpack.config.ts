@@ -63,6 +63,9 @@ const config: Configuration = {
     compress: true,
     port: 4000,
   },
+  externals: [
+    'react',
+  ],
 };
 
 export default config;

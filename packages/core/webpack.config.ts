@@ -10,7 +10,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
  */
 const config = {
   mode: 'none',
-  entry: './src/index.tsx',
+  entry: './src/index.ts',
   devtool: 'inline-source-map',
   target: 'web',
   output: {

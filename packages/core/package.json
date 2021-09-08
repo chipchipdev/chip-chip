@@ -20,6 +20,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "@chip-chip/react-library": "^0.0.4",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "rxjs": "^7.3.0",
