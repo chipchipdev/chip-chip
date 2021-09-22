@@ -154,7 +154,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
       await peerConnection.setLocalDescription(offer);
 
       await this.mutationOffer({
-        channel,
+        channel: { id: channel.id },
         from: { id: this.id },
         to: { id: participant.id },
         offer: offer as TransferRtcSessionDescriptionInput,
@@ -176,7 +176,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
       await peerConnection.setLocalDescription(answer);
 
       await this.mutationAnswer({
-        channel,
+        channel: { id: channel.id },
         from: { id: this.id },
         to: { id: offer.from.id },
         answer: answer as TransferRtcSessionDescriptionInput,
@@ -214,7 +214,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
       .pipe(delay(500))
       .subscribe(async () => {
         await this.mutationLink({
-          channel,
+          channel: { id: channel.id },
           participant: {
             id: this.id,
           },
@@ -327,7 +327,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
       if (type === PeerConnectionType.OFFER) {
         const { participant, channel } = args as MutationLinkArgs;
         await this.mutationCandidate({
-          channel,
+          channel: { id: channel.id },
           from: {
             id: this.id,
           },
@@ -340,7 +340,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
       if (type === PeerConnectionType.ANSWER) {
         const { channel, from, to } = args as MutationOfferArgs;
         await this.mutationCandidate({
-          channel,
+          channel: { id: channel.id },
           from: { id: to.id },
           to: { id: from.id },
           candidate: candidate as TransferRtcIceCandidateInput,
