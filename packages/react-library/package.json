@@ -1,6 +1,6 @@
 {
   "name": "@chip-chip/react-library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "> TODO: description",
   "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
   "homepage": "https://github.com/chipchipdev/chip-chip#readme",
@@ -25,7 +25,7 @@
     "url": "https://github.com/chipchipdev/chip-chip/issues"
   },
   "dependencies": {
-    "@chip-chip/core": "^0.1.0"
+    "@chip-chip/core": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
