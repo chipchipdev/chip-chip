@@ -91,6 +91,8 @@ export default class WebrtcChannelClient {
     this.linked$.subscribe(async (channelWithParticipant) => {
       const { id, participant } = channelWithParticipant;
 
+      if (this.id === participant.id) return;
+
       const peerConnection = await this.createRTCPeerConnectionAndSetupSendChannel(
         PeerConnectionType.OFFER,
         { channel: { id }, participant } as MutationLinkArgs,
@@ -110,6 +112,8 @@ export default class WebrtcChannelClient {
     this.offered$.subscribe(async (offer) => {
       if (this.id !== offer.to.id) return;
 
+      if (this.id === offer.from.id) return;
+
       const peerConnection = await this.createRTCPeerConnectionAndSetupSendChannel(
         PeerConnectionType.ANSWER,
         offer as MutationOfferArgs,
@@ -121,13 +125,15 @@ export default class WebrtcChannelClient {
       await this.mutationAnswer({
         channel,
         from: { id: this.id },
-        to: offer.from,
+        to: { id: offer.from.id },
         answer: answer as TransferRtcSessionDescriptionInput,
       });
     });
 
     this.answered$.subscribe(async (answer) => {
       if (this.id !== answer.to.id) return;
+
+      if (this.id === answer.from.id) return;
 
       const peerConnection = this.connections.find((c) => c.id === answer.from.id);
 
@@ -139,6 +145,8 @@ export default class WebrtcChannelClient {
 
     this.candidated$.subscribe(async (candidate) => {
       if (this.id !== candidate.to.id) return;
+
+      if (this.id === candidate.from.id) return;
 
       const peerConnection = this.connections.find((c) => c.id === candidate.from.id);
 
@@ -271,7 +279,7 @@ export default class WebrtcChannelClient {
           from: {
             id: this.id,
           },
-          to: participant,
+          to: { id: participant.id },
           candidate: candidate as TransferRtcIceCandidateInput,
         });
         return;
@@ -281,8 +289,8 @@ export default class WebrtcChannelClient {
         const { channel, from, to } = args as MutationOfferArgs;
         await this.mutationCandidate({
           channel,
-          from: to,
-          to: from,
+          from: { id: to.id },
+          to: { id: from.id },
           candidate: candidate as TransferRtcIceCandidateInput,
         });
       }
