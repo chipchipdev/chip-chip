@@ -1,0 +1,139 @@
+# This file was generated based on "graphql.schema.json". Do not edit manually.
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Answer {
+  answer: RTCSessionDescription
+  channel: Channel!
+  from: Participant!
+  to: Participant!
+}
+
+type Candidate {
+  candidate: RTCIceCandidate
+  channel: Channel!
+  from: Participant!
+  to: Participant!
+}
+
+type Channel {
+  id: String!
+}
+
+type ChannelWithParticipant {
+  id: String!
+  participant: Participant!
+}
+
+type Mutation {
+  answer(answer: TransferRTCSessionDescriptionInput!, channel: ChannelInput!, from: ParticipantInput!, to: ParticipantInput!): Boolean!
+  candidate(candidate: TransferRTCIceCandidateInput!, channel: ChannelInput!, from: ParticipantInput!, to: ParticipantInput!): Boolean!
+  link(channel: ChannelInput!, participant: ParticipantInput!): Channel!
+  offer(channel: ChannelInput!, from: ParticipantInput!, offer: TransferRTCSessionDescriptionInput!, to: ParticipantInput!): Boolean!
+}
+
+type Offer {
+  channel: Channel!
+  from: Participant!
+  offer: RTCSessionDescription
+  to: Participant!
+}
+
+type Participant {
+  id: String!
+}
+
+type Query {
+  default: String
+}
+
+type RTCIceCandidate {
+  candidate: String
+  component: RTCIceComponent
+  foundation: String
+  port: Int
+  priority: Int
+  protocol: RTCIceProtocol
+  relatedAddress: String
+  relatedPort: Int
+  sdpMLineIndex: Int
+  sdpMid: String
+  tcpType: RTCIceTcpCandidate
+  type: RTCIceCandidateType
+  usernameFragment: String
+}
+
+type RTCSessionDescription {
+  sdp: String
+  type: RTCSdp
+}
+
+type Subscription {
+  answered(channel: ChannelInput!): Answer!
+  candidated(channel: ChannelInput!): Candidate!
+  linked(channel: ChannelInput!): ChannelWithParticipant!
+  offered(channel: ChannelInput!): Offer!
+}
+
+enum RTCIceCandidateType {
+  host
+  prflx
+  relay
+  srflx
+}
+
+enum RTCIceComponent {
+  rtcp
+  rtp
+}
+
+enum RTCIceProtocol {
+  tcp
+  udp
+}
+
+enum RTCIceTcpCandidate {
+  active
+  passive
+  so
+}
+
+enum RTCSdp {
+  answer
+  offer
+  pranswer
+  rollback
+}
+
+input ChannelInput {
+  id: String!
+}
+
+input ParticipantInput {
+  id: String!
+}
+
+input TransferRTCIceCandidateInput {
+  candidate: String
+  component: RTCIceComponent
+  foundation: String
+  port: Int
+  priority: Int
+  protocol: RTCIceProtocol
+  relatedAddress: String
+  relatedPort: Int
+  sdpMLineIndex: Int
+  sdpMid: String
+  tcpType: RTCIceTcpCandidate
+  type: RTCIceCandidateType
+  usernameFragment: String
+}
+
+input TransferRTCSessionDescriptionInput {
+  sdp: String
+  type: RTCSdp
+}

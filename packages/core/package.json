@@ -23,8 +23,7 @@
     "@chip-chip/react-library": "^0.1.0",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
-    "rxjs": "^7.3.0",
-    "ts-transformer-keys": "^0.4.3"
+    "rxjs": "^7.3.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.172",
