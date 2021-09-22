@@ -99,7 +99,7 @@ export default class WebrtcChannelClient {
       );
 
       const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription();
+      await peerConnection.setLocalDescription(offer);
 
       await this.mutationOffer({
         channel,
@@ -121,6 +121,7 @@ export default class WebrtcChannelClient {
 
       await peerConnection.setRemoteDescription(offer.offer as RTCSessionDescriptionInit);
       const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
 
       await this.mutationAnswer({
         channel,
@@ -259,12 +260,12 @@ export default class WebrtcChannelClient {
 
     if (type === PeerConnectionType.OFFER) {
       const { participant } = args as MutationLinkArgs;
-      this.connection$.next({ id: participant.id, connection: peerConnection });
       sendChannel = peerConnection.createDataChannel(participant.id);
+      this.connection$.next({ id: participant.id, connection: peerConnection });
     } else if (type === PeerConnectionType.ANSWER) {
       const { from } = args as MutationOfferArgs;
-      this.connection$.next({ id: from.id, connection: peerConnection });
       sendChannel = peerConnection.createDataChannel(from.id);
+      this.connection$.next({ id: from.id, connection: peerConnection });
     }
 
     peerConnection.onicecandidate = async (e) => {
