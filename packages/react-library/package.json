@@ -1,6 +1,6 @@
 {
   "name": "@chip-chip/react-library",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "> TODO: description",
   "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
   "homepage": "https://github.com/chipchipdev/chip-chip#readme",
@@ -52,5 +52,6 @@
   },
   "peerDependencies": {
     "react": "^17.0.2"
-  }
+  },
+  "gitHead": "6a7eeee3ae32d54fc1904099f76a7615c429a346"
 }

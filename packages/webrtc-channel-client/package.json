@@ -13,9 +13,6 @@
   "files": [
     "lib"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npm.taobao.org/"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chipchipdev/chip-chip.git"
@@ -53,5 +50,6 @@
   },
   "peerDependencies": {
     "react": "^17.0.2"
-  }
+  },
+  "gitHead": "6a7eeee3ae32d54fc1904099f76a7615c429a346"
 }
