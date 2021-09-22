@@ -26,30 +26,36 @@ enum PeerConnectionType {
   ANSWER,
 }
 
-export default class WebrtcChannelClient {
-  id: string = uuid() + Date.now();
+interface WebrtcChannelClientEventMap<ChannelMessage> {
+  message: ChannelMessage,
+}
 
-  client: ApolloClient<NormalizedCacheObject>;
+export default class WebrtcChannelClient<ChannelMessage> {
+  public id: string = uuid() + Date.now();
 
-  connections: { id: string, connection: RTCPeerConnection }[] = [];
+  public client: ApolloClient<NormalizedCacheObject>;
 
-  sendChannels: RTCDataChannel[] = [];
+  public connections: { id: string, connection: RTCPeerConnection }[] = [];
 
-  receiveChannels: RTCDataChannel[] = [];
+  public sendChannels: RTCDataChannel[] = [];
 
-  sendChannel$ = new Subject<RTCDataChannel>();
+  public receiveChannels: RTCDataChannel[] = [];
 
-  connection$ = new Subject<{ id: string, connection: RTCPeerConnection }>();
+  private connection$ = new Subject<{ id: string, connection: RTCPeerConnection }>();
 
-  receiveChannel$ = new Subject<RTCDataChannel>();
+  private sendChannel$ = new Subject<RTCDataChannel>();
 
-  linked$ = new Subject<ChannelWithParticipant>();
+  private receiveChannel$ = new Subject<RTCDataChannel>();
 
-  offered$ = new Subject<Offer>();
+  private linked$ = new Subject<ChannelWithParticipant>();
 
-  answered$ = new Subject<Answer>();
+  private offered$ = new Subject<Offer>();
 
-  candidated$ = new Subject<Candidate>();
+  private answered$ = new Subject<Answer>();
+
+  private candidated$ = new Subject<Candidate>();
+
+  private message$ = new Subject<ChannelMessage>();
 
   constructor(uri: string, wsuri: string, channel: Channel) {
     this.client = createSubscriptionClient(uri, wsuri);
@@ -81,6 +87,52 @@ export default class WebrtcChannelClient {
     this.monitorConnectionSubjects(channel);
 
     this.triggerConnection(channel);
+  }
+
+  public addEventListener: <K extends keyof WebrtcChannelClientEventMap<ChannelMessage>>(
+    type: K,
+    listener: (
+      this: WebrtcChannelClient<ChannelMessage>,
+      ev: WebrtcChannelClientEventMap<ChannelMessage>[K]) => any
+  ) => void = (type, listener) => {
+    switch (type) {
+      case 'message':
+        this.message$.subscribe((message) => {
+          listener.call(this, message);
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  public begin() {
+    this.connection$.complete();
+    this.sendChannel$.complete();
+    this.receiveChannel$.complete();
+    this.linked$.complete();
+    this.offered$.complete();
+    this.candidated$.complete();
+
+    this.enableReceivedChannels();
+  }
+
+  public finish() {
+    this.message$.complete();
+  }
+
+  public send(message: ChannelMessage) {
+    try {
+      this.sendChannels.forEach((channel) => {
+        if (typeof message === 'string') {
+          channel.send(message);
+        } else {
+          channel.send(JSON.stringify(message));
+        }
+      });
+    } catch (e) {
+      throw new Error('message should be stringify');
+    }
   }
 
   private monitorConnectionSubjects(channel: Channel) {
@@ -251,8 +303,7 @@ export default class WebrtcChannelClient {
   }
 
   private async createRTCPeerConnectionAndSetupSendChannel(
-    type: PeerConnectionType,
-    args: MutationLinkArgs | MutationOfferArgs,
+    type: PeerConnectionType, args: MutationLinkArgs | MutationOfferArgs,
   ) {
     const peerConnection = new RTCPeerConnection();
 
@@ -308,5 +359,21 @@ export default class WebrtcChannelClient {
     this.sendChannel$.next(sendChannel);
 
     return peerConnection;
+  }
+
+  private enableReceivedChannels() {
+    this.receiveChannels.forEach((channel) => {
+      channel.addEventListener('message', (ev) => {
+        const { data } = ev;
+
+        if (!data) return;
+
+        try {
+          this.message$.next(JSON.parse(data) as ChannelMessage);
+        } catch {
+          this.message$.next(data as ChannelMessage);
+        }
+      });
+    });
   }
 }
