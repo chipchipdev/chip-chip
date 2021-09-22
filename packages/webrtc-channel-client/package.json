@@ -5,7 +5,7 @@
   "author": "chip.chip.dev <chip.chip.dev@gmail.com>",
   "homepage": "https://github.com/chipchipdev/chip-chip#readme",
   "license": "ISC",
-  "main": "lib/webrtc-channel-client.js",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
