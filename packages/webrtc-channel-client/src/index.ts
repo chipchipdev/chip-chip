@@ -363,7 +363,8 @@ export default class WebrtcChannelClient<ChannelMessage> {
 
   private enableReceivedChannels() {
     this.receiveChannels.forEach((channel) => {
-      channel.addEventListener('message', (ev) => {
+      // eslint-disable-next-line no-param-reassign
+      channel.onmessage = (ev) => {
         const { data } = ev;
 
         if (!data) return;
@@ -371,9 +372,10 @@ export default class WebrtcChannelClient<ChannelMessage> {
         try {
           this.message$.next(JSON.parse(data) as ChannelMessage);
         } catch {
+          console.log('fallback to string');
           this.message$.next(data as ChannelMessage);
         }
-      });
+      };
     });
   }
 }
