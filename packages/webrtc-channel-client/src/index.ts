@@ -28,6 +28,8 @@ enum PeerConnectionType {
 
 interface WebrtcChannelClientEventMap<ChannelMessage> {
   message: ChannelMessage,
+  candidate: void
+  connected: void
 }
 
 export default class WebrtcChannelClient<ChannelMessage> {
@@ -73,6 +75,8 @@ export default class WebrtcChannelClient<ChannelMessage> {
 
   public receiveChannels: RTCDataChannel[] = [];
 
+  public connected$ = new Subject<void>();
+
   public addEventListener: <K extends keyof WebrtcChannelClientEventMap<ChannelMessage>>(
     type: K,
     listener: (
@@ -83,6 +87,18 @@ export default class WebrtcChannelClient<ChannelMessage> {
       case 'message':
         this.message$.subscribe((message) => {
           listener.call(this, message);
+        });
+        break;
+      case 'candidate':
+        this.receiveChannel$
+          .pipe(delay(1_000))
+          .subscribe(() => {
+            listener.call(this);
+          });
+        break;
+      case 'connected':
+        this.connected$.subscribe(() => {
+          listener.call(this);
         });
         break;
       default:
@@ -97,6 +113,9 @@ export default class WebrtcChannelClient<ChannelMessage> {
     this.linked$.complete();
     this.offered$.complete();
     this.candidated$.complete();
+
+    this.connected$.next();
+    this.connected$.complete();
 
     this.enableReceivedChannels();
   }
