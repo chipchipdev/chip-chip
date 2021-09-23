@@ -31,32 +31,6 @@ interface WebrtcChannelClientEventMap<ChannelMessage> {
 }
 
 export default class WebrtcChannelClient<ChannelMessage> {
-  public id: string = uuid() + Date.now();
-
-  public client: ApolloClient<NormalizedCacheObject>;
-
-  public connections: { id: string, connection: RTCPeerConnection }[] = [];
-
-  public sendChannels: RTCDataChannel[] = [];
-
-  public receiveChannels: RTCDataChannel[] = [];
-
-  private connection$ = new Subject<{ id: string, connection: RTCPeerConnection }>();
-
-  private sendChannel$ = new Subject<RTCDataChannel>();
-
-  private receiveChannel$ = new Subject<RTCDataChannel>();
-
-  private linked$ = new Subject<ChannelWithParticipant>();
-
-  private offered$ = new Subject<Offer>();
-
-  private answered$ = new Subject<Answer>();
-
-  private candidated$ = new Subject<Candidate>();
-
-  private message$ = new Subject<ChannelMessage>();
-
   constructor(uri: string, wsuri: string, channel: Channel) {
     this.client = createSubscriptionClient(uri, wsuri);
 
@@ -89,6 +63,16 @@ export default class WebrtcChannelClient<ChannelMessage> {
     this.triggerConnection(channel);
   }
 
+  public id: string = uuid() + Date.now();
+
+  public client: ApolloClient<NormalizedCacheObject>;
+
+  public connections: { id: string, connection: RTCPeerConnection }[] = [];
+
+  public sendChannels: RTCDataChannel[] = [];
+
+  public receiveChannels: RTCDataChannel[] = [];
+
   public addEventListener: <K extends keyof WebrtcChannelClientEventMap<ChannelMessage>>(
     type: K,
     listener: (
@@ -106,7 +90,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
     }
   };
 
-  public begin() {
+  public connected() {
     this.connection$.complete();
     this.sendChannel$.complete();
     this.receiveChannel$.complete();
@@ -135,9 +119,28 @@ export default class WebrtcChannelClient<ChannelMessage> {
     }
   }
 
+  private connection$ = new Subject<{ id: string, connection: RTCPeerConnection }>();
+
+  private sendChannel$ = new Subject<RTCDataChannel>();
+
+  private receiveChannel$ = new Subject<RTCDataChannel>();
+
+  private linked$ = new Subject<ChannelWithParticipant>();
+
+  private offered$ = new Subject<Offer>();
+
+  private answered$ = new Subject<Answer>();
+
+  private candidated$ = new Subject<Candidate>();
+
+  private message$ = new Subject<ChannelMessage>();
+
   private monitorConnectionSubjects(channel: Channel) {
     this.sendChannel$.subscribe((sendChannel) => this.sendChannels.push(sendChannel));
-    this.receiveChannel$.subscribe((receiveChannel) => this.receiveChannels.push(receiveChannel));
+    this.receiveChannel$.subscribe((receiveChannel) => {
+      this.receiveChannels.push(receiveChannel);
+      this.enableReceivedChannels();
+    });
     this.connection$.subscribe((connection) => this.connections.push(connection));
 
     this.linked$.subscribe(async (channelWithParticipant) => {
