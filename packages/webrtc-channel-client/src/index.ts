@@ -134,7 +134,7 @@ export default class WebrtcChannelClient<ChannelMessage> {
         }
       });
     } catch (e) {
-      throw new Error('message should be stringify');
+      console.log(e);
     }
   }
 
@@ -394,7 +394,6 @@ export default class WebrtcChannelClient<ChannelMessage> {
         try {
           this.message$.next(JSON.parse(data) as ChannelMessage);
         } catch {
-          console.log('fallback to string');
           this.message$.next(data as ChannelMessage);
         }
       };
